@@ -24,9 +24,9 @@ class BoolProperty(AbstractProperty):
         return self._widget_ref
 
     def extract_widget_data(self) -> bool:
-        has_value_changed:bool = False
+        has_value_changed: bool = False
         if hasattr(self, "_widget_ref"):
-            widget_value:bool = True if self._widget_ref.checkState() == Qt.Checked else False
+            widget_value: bool = True if self._widget_ref.checkState() == Qt.Checked else False
             if self._value != widget_value:
                 self._value = widget_value
                 has_value_changed = True

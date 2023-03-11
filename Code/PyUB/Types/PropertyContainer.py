@@ -65,7 +65,7 @@ class PropertyContainer:
     def set_properties_from_dict(cls, prop_dict: dict) -> None:
         """ Recieve dictionary of properties values and rewrite properties values"""
         for key, prop in cls.__annotations__.items():
-            if (key in prop_dict) and (type(prop_dict[key]) is type(prop.value())):
+            if (key in prop_dict) and isinstance(prop_dict[key], type(prop.value())):
                 prop.set_value(prop_dict[key])
 
     @classmethod

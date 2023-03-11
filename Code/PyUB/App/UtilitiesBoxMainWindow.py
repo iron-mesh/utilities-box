@@ -1,24 +1,25 @@
 
-
 from PySide2.QtWidgets import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy, QDialog, QApplication
 from PySide2.QtCore import Qt, Slot, QCoreApplication
 from PySide2.QtGui import QFont
 
 from .UBoxSettings import UBoxSettings
+from .FailWidget import FailWidget
 from .ui_forms import Ui_MainWindow
 from .types import PluginListItem, PluginParameters, AppSettings
 import Code.PyUB.utils as utils
 from Code.PyUB.Types.InputWidgets import CheckableButton
+from Code.PyUB.Types import UBWidget
 import os, sys, shelve, pickle
 from .constants import *
 from . import lang_constants as lc
 from .DialogEditProperties import DialogEditProperties
 
-import logging, importlib
+import logging, importlib, traceback
+
 logging.basicConfig(level=logging.DEBUG)
 if LOGGING_DISABLED:
     logging.disable(level=logging.CRITICAL)
-
 
 class UtilitiesBoxMainWindow(QMainWindow):
 
@@ -61,32 +62,28 @@ class UtilitiesBoxMainWindow(QMainWindow):
 
         plugin_dir_list = os.listdir(os.path.abspath(plugins_dir_path))
 
-        utils.ubwidgets_list.clear()
-        prev_len: int = 0
-
         with shelve.open(DATA_APP_PATH) as data:
 
             for dir in plugin_dir_list:
                 if (dir in FOLDER_NAMES_IGNORE_LIST):
                     continue
-
-                prev_len = len(utils.ubwidgets_list)
+                utils.ubwidgets_list.clear()
 
                 if (dir not in self._plugins):
                     self._plugins[dir] = PluginListItem()
 
-                if not self._plugins[dir].module:
-                    try:
+                try:
+                    if not self._plugins[dir].module:
                         self._plugins[dir].module = importlib.import_module(dir)
-                    except:
-                        del self._plugins[dir]
-                        continue
-                else:
-                    self._plugins[dir].module = importlib.reload(self._plugins[dir].module)
+                    else:
+                        self._plugins[dir].module = importlib.reload(self._plugins[dir].module)
+                except Exception:
+                    del self._plugins[dir]
+                    continue
 
-                if (len(utils.ubwidgets_list) - prev_len) == 1:
+                if len(utils.ubwidgets_list) == 1 and issubclass(utils.ubwidgets_list[0], UBWidget):
                     self._plugins[dir].plugin_dir = dir
-                    self._plugins[dir].ubwidget_class = utils.ubwidgets_list[-1]
+                    self._plugins[dir].ubwidget_class = utils.ubwidgets_list[0]
                 else:
                     del self._plugins[dir]
                     continue
@@ -101,14 +98,22 @@ class UtilitiesBoxMainWindow(QMainWindow):
                         pl_params.settings_dict = self._plugins[dir].ubwidget_class.ub_settings.properties_to_dict()
                     data[dir] = pl_params
 
-                self._plugins[dir].plugin_name = self._plugins[dir].ubwidget_class.ub_name if hasattr(self._plugins[dir].ubwidget_class, "ub_name") else self._plugins[dir].plugin_dir
+                self._plugins[dir].plugin_name = self._plugins[dir].ubwidget_class.ub_name if hasattr \
+                    (self._plugins[dir].ubwidget_class, "ub_name") else self._plugins[dir].plugin_dir
                 if self._plugins[dir].is_enabled:
-                    self.ui.tabWidgetPlugins.addTab(self._plugins[dir].ubwidget_class(), self._plugins[dir].plugin_name)
+                    try:
+                        self.ui.tabWidgetPlugins.addTab(self._plugins[dir].ubwidget_class(), self._plugins[dir].plugin_name)
+                    except Exception as exc:
+                        # pass
+                        fail_widget = FailWidget()
+                        fail_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[dir].ubwidget_class, traceback_info=traceback.format_exc()))
+                        self.ui.tabWidgetPlugins.addTab(fail_widget, self._plugins[dir].plugin_name)
 
-        self.ui.scrollAreaPlugins.setWidget(self._render_plugins_control_widget(plugin_dir_list))
+        self.ui.scrollAreaPlugins.setWidget(self._render_plugins_control_widget())
+        utils.ubwidgets_list.clear()
 
 
-    def _save_plugin_settings(self, plugin:PluginListItem):
+    def _save_plugin_settings(self, plugin :PluginListItem):
         with shelve.open(DATA_APP_PATH) as data:
             key = plugin.plugin_dir
             if hasattr(plugin.ubwidget_class, "ub_settings"):
@@ -121,13 +126,13 @@ class UtilitiesBoxMainWindow(QMainWindow):
     def _on_menu_settings(self):
         self.ui.stackedWidget.setCurrentIndex(2)
 
-    def _render_plugins_control_widget(self, pl_list: list) -> QWidget:
+    def _render_plugins_control_widget(self) -> QWidget:
 
         def get_edit_properties_handler(plugin: PluginListItem):
             def edit_prop(arg: PluginListItem):
                 dialog = DialogEditProperties(self, arg)
                 res = dialog.exec_()
-                if res == QDialog.Accepted:
+                if res == QDialog.Accepted and not dialog.is_error_occured():
                     if (arg.ubwidget_class.ub_settings.update_data()):
                         self._save_plugin_settings(arg)
                         for j in range(self.ui.tabWidgetPlugins.count()):
@@ -151,9 +156,9 @@ class UtilitiesBoxMainWindow(QMainWindow):
         h_spacer2 = QSpacerItem(20, 40, QSizePolicy.Expanding, QSizePolicy.Maximum)
         h_spacer = QSpacerItem(40, 20, QSizePolicy.Fixed, QSizePolicy.Maximum)
 
-        row_counter:int = 0
+        row_counter: int = 0
         plugins = self._plugins
-        for i, key in enumerate(pl_list):
+        for i, key in enumerate(self._plugins.keys()):
             row_counter = i
             layout.addWidget(QLabel(plugins[key].plugin_name), i, 0, Qt.AlignRight)
 
@@ -192,7 +197,8 @@ class UtilitiesBoxMainWindow(QMainWindow):
             for i, plugin in self._plugins.items():
                 key = plugin.plugin_dir
                 temp_data = data[key]
-                logging.debug(f"{plugin.ubwidget_class.__name__} activity, cur_value: {plugin.is_enabled}, stored value: {temp_data.is_enabled}")
+                logging.debug \
+                    (f"{plugin.ubwidget_class.__name__} activity, cur_value: {plugin.is_enabled}, stored value: {temp_data.is_enabled}")
                 if temp_data.is_enabled != plugin.is_enabled:
                     temp_data.is_enabled = plugin.is_enabled
                     data[key] = temp_data
@@ -235,7 +241,7 @@ class UtilitiesBoxMainWindow(QMainWindow):
     def _save_app_settings(self) -> None:
         if self._settings.update_data():
             with shelve.open(DATA_APP_PATH) as data:
-                buf:AppSettings = data[APP_SETTINGS_KEY]
+                buf: AppSettings = data[APP_SETTINGS_KEY]
                 buf.settings_dict = self._settings.properties_to_dict()
                 data[APP_SETTINGS_KEY] = buf
             self._apply_settings()
@@ -244,6 +250,3 @@ class UtilitiesBoxMainWindow(QMainWindow):
         app = QApplication.instance()
         font_size = self._settings.get_item_value("font_size")
         app.setFont(QFont("ArialBlack", font_size, QFont.Normal))
-
-
-

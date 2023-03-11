@@ -1,8 +1,9 @@
-import sys, os, logging, math
+import sys, os, logging, math, traceback
 
 import PySide2.QtWidgets
 from PySide2.QtWidgets import QDialog
 from .ui_forms import Ui_Dialog
+from .FailWidget import FailWidget
 
 from . constants import *
 from . import lang_constants as lc
@@ -21,31 +22,38 @@ class DialogEditProperties(QDialog):
         self._ui = Ui_Dialog()
         self._ui.setupUi(self)
         self._ui.frameLangSelect.setVisible(False)
+        self._error_occured = False
 
         self._item = item
 
         if parent.windowIcon():
             self.setWindowIcon(parent.windowIcon())
-
-        # self._ui.widget = item.ubwidget_class.ub_settings.render_layout()
-        self._ui.widget_place.addWidget(item.ubwidget_class.ub_settings.render_layout())
-        self.retranslate()
+        try:
+            self._ui.widget_place.addWidget(item.ubwidget_class.ub_settings.render_layout())
+            self.retranslate()
+        except Exception:
+            fail_widget = FailWidget()
+            fail_widget.set_error_msg(lc.ERROR_SETTING_RENDER_LAYOUT.format(pc_class=item.ubwidget_class.ub_settings, traceback_info=traceback.format_exc()))
+            self._ui.widget_place.addWidget(fail_widget)
+            self.retranslate(error_occured=True)
+            self._error_occured = True
 
         screen = PySide2.QtWidgets.QApplication.primaryScreen()
         width = screen.availableSize().width() if screen.availableSize().width() < 800 else 800
         height = math.trunc(screen.availableSize().height() * .8)
         self.resize(width, height)
 
-    def retranslate(self) -> None:
+    def is_error_occured(self):
+        return self._error_occured
+
+    def retranslate(self, error_occured:bool = False) -> None:
         self._ui.retranslateUi(self)
         self.setWindowTitle(lc.DIALOG_TITLE_CONFIG_PLUGIN.format(self._item.plugin_name))
-        self._item.ubwidget_class.ub_settings.retranslate()
-
-    def update_data(self)->None:
-        pass
+        if not error_occured:
+            self._item.ubwidget_class.ub_settings.retranslate()
 
 
-
+#
 
 
 
