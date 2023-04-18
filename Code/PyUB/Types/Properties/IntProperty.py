@@ -1,30 +1,25 @@
 
-from .import AbstractProperty
+from .import Property
 from PySide2.QtWidgets import QSpinBox, QSizePolicy
 from PySide2.QtCore import QCoreApplication
 
-class IntProperty(AbstractProperty):
+class IntProperty(Property):
 
-    def __init__(self, default_value:int = 0, name ="Unnamed", minimum = 1, maximum = 10, single_step = 1, tool_tip = ""):
+    def __init__(self, default_value:int = 0, name="Unnamed", minimum=1, maximum=10, single_step=1, tool_tip=""):
         self._value = default_value
-        self._name = name
-        self._minimum = minimum
-        self._maximum = maximum
-        self._single_step = single_step
-        self._tool_tip = tool_tip
-
-    def value(self) ->int:
-        return self._value
-
-    def set_value(self, value:int) ->None:
-        self._value = value
+        self._parameters = {}
+        self._parameters["name"] = name
+        self._parameters["minimum"] = minimum
+        self._parameters["maximum"] = maximum
+        self._parameters["single_step"] = single_step
+        self._parameters["tool_tip"] = tool_tip
 
     def get_input_widget(self) -> QSpinBox:
         self._widget_ref = QSpinBox()
         self._widget_ref.setValue(self._value)
-        self._widget_ref.setMinimum(self._minimum)
-        self._widget_ref.setMaximum(self._maximum)
-        self._widget_ref.setSingleStep(self._single_step)
+        self._widget_ref.setMinimum(self._parameters["minimum"])
+        self._widget_ref.setMaximum(self._parameters["maximum"])
+        self._widget_ref.setSingleStep(self._parameters["single_step"])
         self.retranslate()
 
         sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
@@ -39,9 +34,6 @@ class IntProperty(AbstractProperty):
             has_value_changed = True
         return has_value_changed
 
-    def get_name(self) -> str:
-        return QCoreApplication.translate("properties", self._name)
-
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._tool_tip))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
 

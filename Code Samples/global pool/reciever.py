@@ -1,9 +1,7 @@
 
-import pool
+from pool import global_list
 import transmitter
 
 print("receiver has been loaded")
-print(f"pool.global list: {pool.global_list}")
-
-
+print(f"pool.global list: {global_list}")
 import PySide2.QtWidgets

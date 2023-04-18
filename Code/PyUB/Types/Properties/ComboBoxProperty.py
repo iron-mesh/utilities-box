@@ -1,28 +1,29 @@
 
-from . import AbstractProperty
+from . import Property
 from PySide2.QtWidgets import QComboBox, QSizePolicy
 from PySide2.QtCore import QCoreApplication
 
 
-class ComboBoxProperty(AbstractProperty):
+class ComboBoxProperty(Property):
 
     def __init__(self,  items: list[str], translatable: bool = False, default_value: int=0, name="Unnamed", tool_tip=""):
-        self._items = items
-        self._translatable = translatable
+        self._parameters = {}
+        self._parameters["items"] = items
+        self._parameters["translatable"] = translatable
+        self._parameters["name"] = name
+        self._parameters["tool_tip"] = tool_tip
+
         self._value = default_value
-        self._name = name
-        self._tool_tip = tool_tip
 
-    def value(self) -> str:
-        return self._value
-
-    def set_value(self, value: str) -> None:
-        self._value = value
+    def get_currentitem_text(self):
+        if self._value < len(self._parameters["items"]):
+            return self._parameters["items"][self._value]
+        else:
+            return None
 
     def get_input_widget(self) -> QComboBox:
         self._widget_ref = QComboBox()
         self.retranslate()
-
         self._widget_ref.setSizePolicy(QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed))
         return self._widget_ref
 
@@ -33,15 +34,15 @@ class ComboBoxProperty(AbstractProperty):
             has_value_changed = True
         return has_value_changed
 
-    def get_name(self) -> str:
-        return QCoreApplication.translate("properties", self._name)
-
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._tool_tip))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
         self._widget_ref.clear()
-        for el in self._items:
-            if self._translatable:
+        for el in self._parameters["items"]:
+            if self._parameters["translatable"]:
                 self._widget_ref.addItem(QCoreApplication.translate("properties", el))
             else:
                 self._widget_ref.addItem(el)
-        self._widget_ref.setCurrentIndex(self._value)
+        if self._value < len(self._parameters["items"]):
+            self._widget_ref.setCurrentIndex(self._value)
+        else:
+            self._widget_ref.setCurrentIndex(0)

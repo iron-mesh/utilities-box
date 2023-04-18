@@ -1,4 +1,4 @@
-import dataclasses
+import dataclasses, enum
 from PySide2.QtCore import QTranslator
 
 
@@ -12,6 +12,11 @@ class PluginParameters:
 class AppSettings:
     app_lang: str = ""
     settings_dict: dict = dataclasses.field(default_factory=dict)
+
+class AppDataKeys:
+    Language = "lang"
+    SettingsDict = "settings"
+    CurrentTab = "current_tab"
 
 @dataclasses.dataclass
 class PluginListItem:

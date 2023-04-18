@@ -3,8 +3,9 @@ import os
 
 LOGGING_DISABLED = not True
 
-VERSION = (0,0,0, None)
+VERSION = (0, 0, 1, None)
 
-APP_SETTINGS_KEY = "utilities_box"
-FOLDER_NAMES_IGNORE_LIST = {APP_SETTINGS_KEY, "Template", "template"}
-DATA_APP_PATH = "app_data" + os.sep + "data"
+
+FOLDER_NAMES_IGNORE_LIST = {"Template", "template"}
+PLUGINS_DATA_PATH = "app_data" + os.sep + "plugins_data"
+APP_DATA_PATH = "app_data" + os.sep + "app_data"

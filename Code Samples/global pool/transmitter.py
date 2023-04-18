@@ -1,7 +1,7 @@
 
 
-import pool
+from pool import global_list
 
-pool.global_list.append("Hello")
+global_list.append("Hello")
 
 print("transmitter has been loaded")

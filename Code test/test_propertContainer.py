@@ -31,6 +31,7 @@ class Settings(PropertyContainer):
     ufile_list: FilePathListProperty(name="File list (Unique)", mode=PathInputMode.FileOpen, unique_only=True)
     udir_list: FilePathListProperty(name="Dir list (Unique)", mode=PathInputMode.Directory, unique_only=True)
     font:FontSelectProperty(name="Выбор шрифта")
+    paswrd:PasswordStringProperty(name="Пароль")
 
 
 
@@ -51,8 +52,8 @@ window.setWindowTitle("PropertyContainer Test")
 window.resize(1000, 500)
 scroll_area = QScrollArea()
 layout = QVBoxLayout(window)
-layout.addWidget(scroll_area)
-scroll_area.setWidget(Settings.render_layout())
+layout.addWidget(Settings.render_layout2())
+# scroll_area.setWidget(Settings.render_layout())
 btn = QPushButton("Print Properties")
 btn.clicked.connect(print_settings)
 btn2 = QPushButton("Update Print Properties")

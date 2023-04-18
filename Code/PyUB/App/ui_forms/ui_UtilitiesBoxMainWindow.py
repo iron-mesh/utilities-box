@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UtilitiesBoxMainWindowhTwSqA.ui'
+## Form generated from reading UI file 'UtilitiesBoxMainWindowaicbBO.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -28,6 +28,8 @@ class Ui_MainWindow(object):
         self.menu_about.setObjectName(u"menu_about")
         self.menu_plugins = QAction(MainWindow)
         self.menu_plugins.setObjectName(u"menu_plugins")
+        self.menu_logs = QAction(MainWindow)
+        self.menu_logs.setObjectName(u"menu_logs")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout_4 = QVBoxLayout(self.centralwidget)
@@ -138,7 +140,7 @@ class Ui_MainWindow(object):
         self.scrollAreaPlugins.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 96, 26))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 854, 604))
         self.scrollAreaPlugins.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_2.addWidget(self.scrollAreaPlugins)
@@ -249,6 +251,50 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
 
         self.stackedWidget.addWidget(self.settings)
+        self.logs = QWidget()
+        self.logs.setObjectName(u"logs")
+        self.verticalLayout_5 = QVBoxLayout(self.logs)
+        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.pushButtonCloseLogs = QPushButton(self.logs)
+        self.pushButtonCloseLogs.setObjectName(u"pushButtonCloseLogs")
+        self.pushButtonCloseLogs.setFont(font1)
+        self.pushButtonCloseLogs.setToolTipDuration(-1)
+        self.pushButtonCloseLogs.setStyleSheet(u"color: rgb(255, 255, 255);\n"
+"background-color: rgb(251, 55, 30);")
+        self.pushButtonCloseLogs.setFlat(False)
+
+        self.horizontalLayout_6.addWidget(self.pushButtonCloseLogs)
+
+        self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_8)
+
+        self.labelLogsPageTitle = QLabel(self.logs)
+        self.labelLogsPageTitle.setObjectName(u"labelLogsPageTitle")
+        self.labelLogsPageTitle.setFont(font2)
+
+        self.horizontalLayout_6.addWidget(self.labelLogsPageTitle)
+
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_9)
+
+
+        self.verticalLayout_5.addLayout(self.horizontalLayout_6)
+
+        self.listViewLogs = QListView(self.logs)
+        self.listViewLogs.setObjectName(u"listViewLogs")
+
+        self.verticalLayout_5.addWidget(self.listViewLogs)
+
+        self.pushButtonClearLogs = QPushButton(self.logs)
+        self.pushButtonClearLogs.setObjectName(u"pushButtonClearLogs")
+
+        self.verticalLayout_5.addWidget(self.pushButtonClearLogs)
+
+        self.stackedWidget.addWidget(self.logs)
 
         self.verticalLayout_4.addWidget(self.stackedWidget)
 
@@ -269,6 +315,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_2.menuAction())
         self.menu.addAction(self.menu_plugins)
         self.menu.addAction(self.menu_settings)
+        self.menu.addAction(self.menu_logs)
         self.menu.addSeparator()
         self.menu.addAction(self.menu_exit)
         self.menu_2.addAction(self.menu_manual)
@@ -276,8 +323,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
-        self.tabWidgetPlugins.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(0)
+        self.tabWidgetPlugins.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -290,9 +337,6 @@ class Ui_MainWindow(object):
         self.menu_settings.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Alt+S", None))
 #endif // QT_CONFIG(shortcut)
         self.menu_exit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
-#if QT_CONFIG(shortcut)
-        self.menu_exit.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Q", None))
-#endif // QT_CONFIG(shortcut)
         self.menu_manual.setText(QCoreApplication.translate("MainWindow", u"User Manual", None))
 #if QT_CONFIG(shortcut)
         self.menu_manual.setShortcut(QCoreApplication.translate("MainWindow", u"F1", None))
@@ -301,6 +345,10 @@ class Ui_MainWindow(object):
         self.menu_plugins.setText(QCoreApplication.translate("MainWindow", u"Plugins", None))
 #if QT_CONFIG(shortcut)
         self.menu_plugins.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Alt+P", None))
+#endif // QT_CONFIG(shortcut)
+        self.menu_logs.setText(QCoreApplication.translate("MainWindow", u"Logs", None))
+#if QT_CONFIG(shortcut)
+        self.menu_logs.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Alt+L", None))
 #endif // QT_CONFIG(shortcut)
         self.tabWidgetPlugins.setTabText(self.tabWidgetPlugins.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Tab 2", None))
         self.tabWidgetPlugins.setTabText(self.tabWidgetPlugins.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Tab 1", None))
@@ -327,6 +375,12 @@ class Ui_MainWindow(object):
         self.pushButtonAplySettings.setToolTip(QCoreApplication.translate("MainWindow", u"Apply and save current settings", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButtonAplySettings.setText(QCoreApplication.translate("MainWindow", u"Apply Settings", None))
+#if QT_CONFIG(tooltip)
+        self.pushButtonCloseLogs.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
+#endif // QT_CONFIG(tooltip)
+        self.pushButtonCloseLogs.setText(QCoreApplication.translate("MainWindow", u"\u00ab", None))
+        self.labelLogsPageTitle.setText(QCoreApplication.translate("MainWindow", u"Logs", None))
+        self.pushButtonClearLogs.setText(QCoreApplication.translate("MainWindow", u"Clear logs", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"App", None))
         self.menu_2.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
     # retranslateUi

@@ -15,10 +15,8 @@ from Code.PyUB.App import UtilitiesBoxMainWindow
 
 
 app = QApplication(sys.argv)
-# app.setFont(QFont("ArialBlack", 12, QFont.Normal))
-app.setStyle("Fusion")
 window = UtilitiesBoxMainWindow()
-# window.showMaximized()
+window.showMaximized()
 window.show()
 sys.exit(app.exec_())
 

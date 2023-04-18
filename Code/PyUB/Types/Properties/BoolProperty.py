@@ -1,21 +1,16 @@
 
-from . import AbstractProperty
+from . import Property
 from PySide2.QtWidgets import QCheckBox
 from  PySide2.QtCore import Qt
 from PySide2.QtCore import QCoreApplication
 
-class BoolProperty(AbstractProperty):
+class BoolProperty(Property):
 
-    def __init__(self, default_value:bool = False, name = "Unnamed", tool_tip = ""):
+    def __init__(self, default_value:bool=False, name="Unnamed", tool_tip=""):
         self._value = default_value
-        self._name = name
-        self._tool_tip = tool_tip
-
-    def value(self) ->bool:
-        return self._value
-
-    def set_value(self, value:bool) ->None:
-        self._value = value
+        self._parameters = {}
+        self._parameters["name"] = name
+        self._parameters["tool_tip"] = tool_tip
 
     def get_input_widget(self) -> QCheckBox:
         self._widget_ref = QCheckBox()
@@ -32,8 +27,5 @@ class BoolProperty(AbstractProperty):
                 has_value_changed = True
         return has_value_changed
 
-    def get_name(self) -> str:
-        return QCoreApplication.translate("properties", self._name)
-
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._tool_tip))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))

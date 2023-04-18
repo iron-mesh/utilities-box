@@ -21,14 +21,14 @@
        <bool>true</bool>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="widgets_page">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTabWidget" name="tabWidgetPlugins">
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="documentMode">
            <bool>false</bool>
@@ -205,8 +205,8 @@ background-color: rgb(251, 55, 30);</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>96</width>
-             <height>26</height>
+             <width>854</width>
+             <height>604</height>
             </rect>
            </property>
           </widget>
@@ -413,6 +413,93 @@ background-color: rgb(251, 55, 30);</string>
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="logs">
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QPushButton" name="pushButtonCloseLogs">
+            <property name="font">
+             <font>
+              <family>MS Shell Dlg 2</family>
+              <pointsize>18</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="toolTip">
+             <string>Back to Main page</string>
+            </property>
+            <property name="toolTipDuration">
+             <number>-1</number>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(251, 55, 30);</string>
+            </property>
+            <property name="text">
+             <string>«</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelLogsPageTitle">
+            <property name="font">
+             <font>
+              <family>Arial Black</family>
+              <pointsize>16</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Logs</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_9">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListView" name="listViewLogs"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonClearLogs">
+          <property name="text">
+           <string>Clear logs</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -432,6 +519,7 @@ background-color: rgb(251, 55, 30);</string>
     </property>
     <addaction name="menu_plugins"/>
     <addaction name="menu_settings"/>
+    <addaction name="menu_logs"/>
     <addaction name="separator"/>
     <addaction name="menu_exit"/>
    </widget>
@@ -458,9 +546,6 @@ background-color: rgb(251, 55, 30);</string>
    <property name="text">
     <string>Exit</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
-   </property>
   </action>
   <action name="menu_manual">
    <property name="text">
@@ -481,6 +566,14 @@ background-color: rgb(251, 55, 30);</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+P</string>
+   </property>
+  </action>
+  <action name="menu_logs">
+   <property name="text">
+    <string>Logs</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+L</string>
    </property>
   </action>
  </widget>
