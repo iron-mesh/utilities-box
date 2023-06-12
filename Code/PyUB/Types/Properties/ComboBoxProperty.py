@@ -7,19 +7,17 @@ from PySide2.QtCore import QCoreApplication
 class ComboBoxProperty(Property):
 
     def __init__(self,  items: list[str], translatable: bool = False, default_value: int=0, name="Unnamed", tool_tip=""):
-        self._parameters = {}
-        self._parameters["items"] = items
-        self._parameters["translatable"] = translatable
-        self._parameters["name"] = name
-        self._parameters["tool_tip"] = tool_tip
-
+        self.p_items = items
+        self.p_translatable = translatable
+        self.p_name = name
+        self.p_tool_tip = tool_tip
         self._value = default_value
 
-    def get_currentitem_text(self):
-        if self._value < len(self._parameters["items"]):
-            return self._parameters["items"][self._value]
+    def get_current_item_text(self) -> int:
+        if self._value < len(self.p_items):
+            return self.p_items[self._value]
         else:
-            return None
+            return -1
 
     def get_input_widget(self) -> QComboBox:
         self._widget_ref = QComboBox()
@@ -34,15 +32,21 @@ class ComboBoxProperty(Property):
             has_value_changed = True
         return has_value_changed
 
+    def set_value(self, value: int) -> None:
+        if value < 0:
+            self.set_value(0)
+        elif value >= len(self.p_items):
+            self.set_value(len(self.p_items) - 1)
+
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))
         self._widget_ref.clear()
-        for el in self._parameters["items"]:
-            if self._parameters["translatable"]:
+        for el in self.p_items:
+            if self.p_translatable:
                 self._widget_ref.addItem(QCoreApplication.translate("properties", el))
             else:
                 self._widget_ref.addItem(el)
-        if self._value < len(self._parameters["items"]):
+        if self._value < len(self.p_items):
             self._widget_ref.setCurrentIndex(self._value)
         else:
             self._widget_ref.setCurrentIndex(0)

@@ -16,7 +16,5 @@ def register_ubwidget(widget: UBWidget) -> None:
     ubwidgets_list.append(widget)
 
 
-def open_database(ubw_class: UBWidget, flag="c", protocol=None, writeback=False) -> Any:
-    shelve.open()
 
 

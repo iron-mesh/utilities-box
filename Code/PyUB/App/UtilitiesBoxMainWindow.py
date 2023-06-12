@@ -91,16 +91,16 @@ class UtilitiesBoxMainWindow(QMainWindow):
         with shelve.open(APP_DATA_PATH) as data:
             key = AppDataKeys.SettingsDict
             if key in data:
-                self._settings.set_properties_from_dict(data[key])
+                self._settings.set_propvalues_from_dict(data[key])
             else:
-                data[key] = self._settings.properties_to_dict()
+                data[key] = self._settings.propvalues_to_dict()
         self._apply_settings()
 
     @Slot()
     def _save_app_settings(self) -> None:
         if self._settings.update_data():
             with shelve.open(APP_DATA_PATH) as data:
-                data[AppDataKeys.SettingsDict] = self._settings.properties_to_dict()
+                data[AppDataKeys.SettingsDict] = self._settings.propvalues_to_dict()
             self._apply_settings()
 
     def _apply_settings(self):

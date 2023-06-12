@@ -8,8 +8,7 @@ class Property(AbstractProperty):
     def __init__(self, default_value: Any, name: str = "Unnamed") -> None:
         """Init property instance"""
         self._value = default_value
-        self._parameters = {}
-        self._parameters["name"] = name
+        self.p_name = name
 
     def value(self) -> Any:
         """Returns property's value"""
@@ -21,13 +20,13 @@ class Property(AbstractProperty):
 
     def get_parameters_dict(self) -> dict[str, Any]:
         """ Get property parameters dict"""
-        return self._parameters
+        return {key: value for key, value in vars(self).items() if key[0:2] == "p_"}
 
     def set_parameters_from_dict(self, params: dict[str, Any]) -> None:
         """ Set property parameters from dict"""
-        for key in params.keys():
-            if (key in self._parameters) and isinstance(params[key], type(self._parameters[key])):
-                self._parameters[key] = params[key]
+        for key, val in params.items():
+            if hasattr(self, key) and type(self.value()) is type(val):
+                setattr(self, key, val)
 
     def get_input_widget(self) -> QWidget:
         """Returns widget for data input"""
@@ -40,7 +39,7 @@ class Property(AbstractProperty):
 
     def get_name(self) -> str:
         """Returns property's name or its translation"""
-        return QCoreApplication.translate("properties", self._parameters["name"])
+        return QCoreApplication.translate("properties", self.p_name)
 
     def retranslate(self) -> None:
         pass

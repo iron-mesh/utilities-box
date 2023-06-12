@@ -20,6 +20,7 @@ class PluginManager:
 
     def load_plugins(self):
         plugins_dir_path = os.path.abspath("Plugins")
+        self._twidget.currentChanged.disconnect(self._on_tab_changed)
 
         if not hasattr(self, "plugins_loaded"):
             self.plugins_loaded = True
@@ -57,27 +58,25 @@ class PluginManager:
 
                 if dir in data:
                     if hasattr(self._plugins[dir].ubwidget_class, "ub_settings"):
-                        self._plugins[dir].ubwidget_class.ub_settings.set_properties_from_dict(data[dir].settings_dict)
+                        self._plugins[dir].ubwidget_class.ub_settings.set_propvalues_from_dict(data[dir].settings_prop_values)
                     self._plugins[dir].is_enabled = data[dir].is_enabled
                 else:
                     pl_params = PluginParameters()
                     if hasattr(self._plugins[dir].ubwidget_class, "ub_settings"):
-                        pl_params.settings_dict = self._plugins[dir].ubwidget_class.ub_settings.properties_to_dict()
+                        pl_params.settings_prop_values = self._plugins[dir].ubwidget_class.ub_settings.propvalues_to_dict()
                     data[dir] = pl_params
 
                 self._plugins[dir].plugin_name = self._plugins[dir].ubwidget_class.ub_name if hasattr \
                     (self._plugins[dir].ubwidget_class, "ub_name") else self._plugins[dir].plugin_dir
                 if self._plugins[dir].is_enabled:
-                    try:
-                        self._twidget.addTab(self._plugins[dir].ubwidget_class(), self._plugins[dir].plugin_name)
-                    except Exception as exc:
-                        # pass
-                        fail_widget = FailWidget()
-                        fail_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[dir].ubwidget_class, traceback_info=traceback.format_exc()))
-                        self._twidget.addTab(fail_widget, self._plugins[dir].plugin_name)
+                    dummy_widget = QWidget()
+                    dummy_widget.load_key = dir
+                    self._twidget.addTab(dummy_widget, "*" + self._plugins[dir].plugin_name)
 
         self._controlarea.setWidget(self._render_plugins_control_widget())
         utils.ubwidgets_list.clear()
+        self._twidget.currentChanged.connect(self._on_tab_changed)
+        self._on_tab_changed(2)
 
     def _render_plugins_control_widget(self) -> QWidget:
 
@@ -101,7 +100,7 @@ class PluginManager:
 
             return lambda state: switch_plugin(arg, state)
 
-        logging.debug("Creating of plugin page")
+        logging.debug("Creating plugin page")
         widget = QWidget()
         h_layout = QHBoxLayout(widget)
         nested_widget = QWidget()
@@ -141,7 +140,7 @@ class PluginManager:
             if hasattr(plugin.ubwidget_class, "ub_settings"):
                 logging.debug(f"Saving settings for class: {plugin.ubwidget_class.__name__}")
                 temp = data[key]
-                temp.settings_dict = plugin.ubwidget_class.ub_settings.properties_to_dict()
+                temp.settings_prop_values = plugin.ubwidget_class.ub_settings.propvalues_to_dict()
                 data[key] = temp
 
     def update_plugins(self, update_tabs=False):
@@ -168,10 +167,25 @@ class PluginManager:
 
     @Slot(int)
     def _on_tab_changed(self, index:int):
-        pass
+        cur_widget = self._twidget.widget(index)
+        if hasattr(cur_widget, "load_key"):
+            key = cur_widget.load_key
+            self._twidget.currentChanged.disconnect(self._on_tab_changed)
+            try:
+                new_widget = self._plugins[key].ubwidget_class()
+            except Exception as exc:
+                # pass
+                new_widget = FailWidget()
+                new_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[key].ubwidget_class,                                                                      traceback_info=traceback.format_exc()))
+            finally:
+                self._twidget.removeTab(index)
+                self._twidget.insertTab(index, new_widget, self._plugins[key].plugin_name)
+                self._twidget.setCurrentIndex(index)
+            self._twidget.currentChanged.connect(self._on_tab_changed)
 
     def set_qtabwidget(self, twidget:QTabWidget):
         self._twidget = twidget
+        twidget.currentChanged.connect(self._on_tab_changed)
 
     def get_qtabwidget(self) -> QTabWidget:
         return self._twidget

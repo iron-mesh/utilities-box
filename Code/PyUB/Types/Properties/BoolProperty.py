@@ -8,9 +8,8 @@ class BoolProperty(Property):
 
     def __init__(self, default_value:bool=False, name="Unnamed", tool_tip=""):
         self._value = default_value
-        self._parameters = {}
-        self._parameters["name"] = name
-        self._parameters["tool_tip"] = tool_tip
+        self.p_name = name
+        self.p_tool_tip = tool_tip
 
     def get_input_widget(self) -> QCheckBox:
         self._widget_ref = QCheckBox()
@@ -21,11 +20,11 @@ class BoolProperty(Property):
     def extract_widget_data(self) -> bool:
         has_value_changed: bool = False
         if hasattr(self, "_widget_ref"):
-            widget_value: bool = True if self._widget_ref.checkState() == Qt.Checked else False
+            widget_value: bool = self._widget_ref.checkState() == Qt.Checked
             if self._value != widget_value:
                 self._value = widget_value
                 has_value_changed = True
         return has_value_changed
 
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))

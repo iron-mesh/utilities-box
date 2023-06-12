@@ -7,19 +7,18 @@ class IntProperty(Property):
 
     def __init__(self, default_value:int = 0, name="Unnamed", minimum=1, maximum=10, single_step=1, tool_tip=""):
         self._value = default_value
-        self._parameters = {}
-        self._parameters["name"] = name
-        self._parameters["minimum"] = minimum
-        self._parameters["maximum"] = maximum
-        self._parameters["single_step"] = single_step
-        self._parameters["tool_tip"] = tool_tip
+        self.p_name = name
+        self.p_minimum = minimum
+        self.p_maximum = maximum
+        self.p_single_step = single_step
+        self.p_tool_tip = tool_tip
 
     def get_input_widget(self) -> QSpinBox:
         self._widget_ref = QSpinBox()
         self._widget_ref.setValue(self._value)
-        self._widget_ref.setMinimum(self._parameters["minimum"])
-        self._widget_ref.setMaximum(self._parameters["maximum"])
-        self._widget_ref.setSingleStep(self._parameters["single_step"])
+        self._widget_ref.setMinimum(self.p_minimum)
+        self._widget_ref.setMaximum(self.p_maximum)
+        self._widget_ref.setSingleStep(self.p_single_step)
         self.retranslate()
 
         sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
@@ -34,6 +33,14 @@ class IntProperty(Property):
             has_value_changed = True
         return has_value_changed
 
+    def set_value(self, value: float) -> None:
+        if value < self.p_minimum:
+            self.set_value(self.p_minimum)
+        elif value > self.p_maximum:
+            self.set_value(self.p_maximum)
+        else:
+            self.set_value(value)
+
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))
 

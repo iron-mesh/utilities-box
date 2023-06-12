@@ -6,7 +6,8 @@ from PySide2.QtCore import QTranslator
 class PluginParameters:
     current_lang: str = ""
     is_enabled: bool = True
-    settings_dict: dict = dataclasses.field(default_factory=dict)
+    settings_prop_values: dict = dataclasses.field(default_factory=dict)
+    parameters_dict: dict = dataclasses.field(default_factory=dict)
 
 @dataclasses.dataclass
 class AppSettings:

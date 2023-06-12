@@ -28,18 +28,18 @@ class PropertyContainer:
 
     @classmethod
     def get_property(cls, name: str) -> AbstractProperty:
-        """ Returns instance of AbstractProperty class child"""
+        """ Returns property instance with <name>"""
         return cls.__annotations__[name]
 
     @classmethod
     def get_property_value(cls, name: str) -> Any:
-        """ Returns the value of a property wit <name> """
-        return cls.get_property(name).value()
+        """ Returns the value of a property with <name> """
+        return cls.__annotations__[name].value()
 
     @classmethod
     def update_data(cls) -> bool:
         """ Extracts data from gui widgets
-        Returns True if any value is updated, False - otherwise"""
+        Returns True if any value is changed, False - otherwise"""
         is_updated:bool = False
 
         for key, prop in cls.__annotations__.items():
@@ -50,7 +50,7 @@ class PropertyContainer:
 
 
     @classmethod
-    def properties_to_dict(cls) -> dict[str, (AbstractProperty, Any)]:
+    def propvalues_to_dict(cls) -> dict[str, (AbstractProperty, Any)]:
         """ Return dictionary of properties values"""
         prop_values_dict = {}
         for key, prop in cls.__annotations__.items():
@@ -58,7 +58,7 @@ class PropertyContainer:
         return prop_values_dict
 
     @classmethod
-    def set_properties_from_dict(cls, prop_dict: dict[str, (AbstractProperty, Any)]) -> None:
+    def set_propvalues_from_dict(cls, prop_dict: dict[str, (AbstractProperty, Any)]) -> None:
         """ Recieves dictionary of properties values and rewrite properties values"""
         for key, prop in cls.__annotations__.items():
             if (key in prop_dict) \

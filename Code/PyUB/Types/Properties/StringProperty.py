@@ -8,20 +8,19 @@ class StringProperty(Property):
 
     def __init__(self, default_value:str = "", name ="Unnamed", maxlen = 0, input_mask = "", placeholder ="", tool_tip =""):
         self._value = default_value
-        self._parameters = {}
-        self._parameters["name"] = name
-        self._parameters["placeholder"] = placeholder
-        self._parameters["tool_tip"] = tool_tip
-        self._parameters["maxlen"] = maxlen
-        self._parameters["input_mask"] = input_mask
+        self.p_name = name
+        self.p_placeholder = placeholder
+        self.p_tool_tip = tool_tip
+        self.p_maxlen = maxlen
+        self.p_input_mask = input_mask
 
     def get_input_widget(self) -> QLineEdit:
         self._widget_ref = QLineEdit()
         self.retranslate()
-        if self._parameters["maxlen"] > 0:
-            self._widget_ref.setMaxLength(self._parameters["maxlen"])
-        if self._parameters["input_mask"]:
-            self._widget_ref.setInputMask(self._parameters["input_mask"])
+        if self.p_maxlen > 0:
+            self._widget_ref.setMaxLength(self.p_maxlen)
+        if self.p_input_mask:
+            self._widget_ref.setInputMask(self.p_input_mask)
         self._widget_ref.setText(self._value)
         return self._widget_ref
 
@@ -33,5 +32,5 @@ class StringProperty(Property):
         return has_value_changed
 
     def retranslate(self) -> None:
-        self._widget_ref.setPlaceholderText(QCoreApplication.translate("properties", self._parameters["placeholder"]))
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
+        self._widget_ref.setPlaceholderText(QCoreApplication.translate("properties", self.p_placeholder))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))

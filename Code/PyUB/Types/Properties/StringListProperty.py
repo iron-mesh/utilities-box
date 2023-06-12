@@ -9,9 +9,8 @@ class StringListProperty(Property):
 
     def __init__(self, default_value: list[str]=[""], name="Unnamed", tool_tip=""):
         self._value = default_value
-        self._parameters = {}
-        self._parameters["name"] = name
-        self._parameters["tool_tip"] = tool_tip
+        self.p_name = name
+        self.p_tool_tip = tool_tip
 
     def get_input_widget(self) -> QWidget:
         self._widget_ref = StringListInput()
@@ -27,5 +26,5 @@ class StringListProperty(Property):
             return False
 
     def retranslate(self) -> None:
-        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self._parameters["tool_tip"]))
+        self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))
 
