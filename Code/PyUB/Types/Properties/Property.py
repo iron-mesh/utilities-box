@@ -1,8 +1,9 @@
 
 from typing import Any
-from PySide2.QtWidgets import QWidget
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import QCoreApplication
 from . import AbstractProperty
+
 
 class Property(AbstractProperty):
     def __init__(self, default_value: Any, name: str = "Unnamed") -> None:
@@ -25,7 +26,7 @@ class Property(AbstractProperty):
     def set_parameters_from_dict(self, params: dict[str, Any]) -> None:
         """ Set property parameters from dict"""
         for key, val in params.items():
-            if hasattr(self, key) and type(self.value()) is type(val):
+            if hasattr(self, key) and type(getattr(self, key)) is type(val):
                 setattr(self, key, val)
 
     def get_input_widget(self) -> QWidget:

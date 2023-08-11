@@ -1,6 +1,6 @@
 
-from .ui_forms.ui_plugin_init_failed import Ui_Form
-from PySide2.QtWidgets import QWidget, QPlainTextEdit
+from ..ui_forms.ui_plugin_init_failed import Ui_Form
+from PySide6.QtWidgets import QWidget, QPlainTextEdit
 
 
 class FailWidget(QWidget):

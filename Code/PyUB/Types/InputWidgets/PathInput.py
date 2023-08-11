@@ -1,5 +1,5 @@
-from PySide2.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QPushButton, QFileDialog
-from PySide2.QtCore import Signal
+from PySide6.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QPushButton, QFileDialog
+from PySide6.QtCore import Signal
 import logging, enum
 
 logging.basicConfig(level=logging.DEBUG)
@@ -26,12 +26,12 @@ class PathInput(QWidget):
 
         self._line_edit = QLineEdit()
         self._btn_selectpath = QPushButton(u"...")
-        self._btn_selectpath.clicked.connect(self._on_select_path)
+        self._btn_selectpath.clicked.connect(self.select_path)
         self._btn_clear = QPushButton(u"✖")
         self._btn_clear.clicked.connect(self._on_clear)
 
         layout = QHBoxLayout(self)
-        layout.setMargin(0)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._line_edit)
         layout.addWidget(self._btn_selectpath)
         layout.addWidget(self._btn_clear)
@@ -84,22 +84,23 @@ class PathInput(QWidget):
     def toolTip(self) -> str:
         return self._line_edit.toolTip()
 
-    def _on_select_path(self) -> None:
-        buf_path = self.get_path()
+    def select_path(self) -> str:
+        prev_path = self.get_path()
         path: str = ""
         if (self._mode == PathInputMode.Directory):
             path: str = QFileDialog.getExistingDirectory(None, self.window_title(), self.get_path(),
                                                          QFileDialog.ShowDirsOnly)
         elif (self._mode == PathInputMode.FileOpen):
-            path: str = QFileDialog.getOpenFileName(None, self.window_title(), self.get_path(),
-                                                    f"{self.file_filter()[0]} {self.file_filter()[1]}")[0]
+            path: str = QFileDialog.getOpenFileName(None, self.window_title(), self.get_path(), self.file_filter())[0]
         elif (self._mode == PathInputMode.FileSave):
-            path: str = QFileDialog.getSaveFileName(None, self.window_title(), self.get_path(),
-                                                    f"{self.file_filter()[0]} {self.file_filter()[1]}")[0]
+            path: str = QFileDialog.getSaveFileName(None, self.window_title(), self.get_path(), self.file_filter())[0]
 
-        if (path != buf_path and path):
+        if (path != prev_path and path):
             self.set_path(path)
             self.path_changed.emit(path)
+            return path
+        else:
+            return prev_path
 
     def _on_clear(self) -> None:
         self._line_edit.clear()

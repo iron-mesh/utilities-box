@@ -1,6 +1,6 @@
 
-from PySide2.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QSpacerItem ,QSizePolicy, QInputDialog, QListWidgetItem
-from PySide2.QtCore import Signal, Slot, QCoreApplication
+from PySide6.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QSpacerItem ,QSizePolicy, QInputDialog, QListWidgetItem
+from PySide6.QtCore import Signal, Slot, QCoreApplication
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -19,7 +19,7 @@ class StringListInput(QWidget):
 
         self.listWidget.itemDoubleClicked.connect(self._edit_item)
         horizontalLayout.addWidget(self.listWidget)
-        horizontalLayout.setMargin(0)
+        horizontalLayout.setContentsMargins(0, 0, 0, 0)
 
         verticalLayout = QVBoxLayout()
 

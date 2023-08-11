@@ -1,15 +1,11 @@
 
-from PySide2.QtWidgets import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy, QDialog, QApplication
-from PySide2.QtCore import Qt, Slot, QCoreApplication
-from PySide2.QtGui import QFont
+from PySide6.QtWidgets import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy, QDialog, QApplication
+from PySide6.QtCore import Qt, Slot, QCoreApplication
+from PySide6.QtGui import QFont
 
 from .UBoxSettings import UBoxSettings
-from .FailWidget import FailWidget
 from .ui_forms import Ui_MainWindow
-from .types import PluginListItem, PluginParameters, AppDataKeys
-import Code.PyUB.utils as utils
-from Code.PyUB.Types.InputWidgets import CheckableButton
-from Code.PyUB.Types import UBWidget
+from .app_types import  AppDataKeys
 import os, sys, shelve, pickle
 from .constants import *
 from . import lang_constants as lc
@@ -21,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG)
 if LOGGING_DISABLED:
     logging.disable(level=logging.CRITICAL)
 
-class UtilitiesBoxMainWindow(QMainWindow):
+class UBoxMainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -106,5 +102,6 @@ class UtilitiesBoxMainWindow(QMainWindow):
     def _apply_settings(self):
         app = QApplication.instance()
         font_size = self._settings.get_property_value("font_size")
-        app.setFont(QFont("ArialBlack", font_size, QFont.Normal))
-        app.setStyle(self._settings.get_property("style").get_currentitem_text())
+        font_family = self._settings.get_property("font_family").get_current_font().family()
+        app.setFont(QFont(font_family, font_size, QFont.Normal))
+        app.setStyle(self._settings.get_property("style").get_current_item_text())

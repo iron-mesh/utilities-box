@@ -1,17 +1,26 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UtilitiesBoxMainWindowaicbBO.ui'
+## Form generated from reading UI file 'UtilitiesBoxMainWindowrEDvxU.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.2
+## Created by: Qt User Interface Compiler version 6.5.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
-
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QFrame,
+    QHBoxLayout, QLabel, QListView, QMainWindow,
+    QMenu, QMenuBar, QPushButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QStackedWidget, QStatusBar,
+    QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -67,7 +76,6 @@ class Ui_MainWindow(object):
         font = QFont()
         font.setPointSize(18)
         font.setBold(True)
-        font.setWeight(75)
         self.pushButtonClosePluginPage.setFont(font)
         self.pushButtonClosePluginPage.setStyleSheet(u"color: rgb(255, 255, 255);\n"
 "background-color: rgb(251, 55, 30);")
@@ -87,10 +95,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.btnReloadPlugins.sizePolicy().hasHeightForWidth())
         self.btnReloadPlugins.setSizePolicy(sizePolicy)
         font1 = QFont()
-        font1.setFamily(u"MS Shell Dlg 2")
+        font1.setFamilies([u"MS Shell Dlg 2"])
         font1.setPointSize(18)
         font1.setBold(True)
-        font1.setWeight(75)
         self.btnReloadPlugins.setFont(font1)
         self.btnReloadPlugins.setStyleSheet(u"")
         self.btnReloadPlugins.setFlat(False)
@@ -104,10 +111,9 @@ class Ui_MainWindow(object):
         self.labelPluginsPageTitle = QLabel(self.plugins_list)
         self.labelPluginsPageTitle.setObjectName(u"labelPluginsPageTitle")
         font2 = QFont()
-        font2.setFamily(u"Arial Black")
+        font2.setFamilies([u"Arial Black"])
         font2.setPointSize(16)
         font2.setBold(True)
-        font2.setWeight(75)
         self.labelPluginsPageTitle.setFont(font2)
 
         self.horizontalLayout_2.addWidget(self.labelPluginsPageTitle)
@@ -140,7 +146,7 @@ class Ui_MainWindow(object):
         self.scrollAreaPlugins.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 854, 604))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 854, 599))
         self.scrollAreaPlugins.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_2.addWidget(self.scrollAreaPlugins)
@@ -301,7 +307,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 894, 21))
+        self.menubar.setGeometry(QRect(0, 0, 894, 22))
         self.menu = QMenu(self.menubar)
         self.menu.setObjectName(u"menu")
         self.menu_2 = QMenu(self.menubar)
@@ -323,7 +329,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(3)
         self.tabWidgetPlugins.setCurrentIndex(1)
 
 

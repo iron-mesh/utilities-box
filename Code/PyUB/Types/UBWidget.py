@@ -1,5 +1,5 @@
 
-from PySide2.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget
 
 class UBWidget(QWidget):
 
@@ -15,5 +15,5 @@ class UBWidget(QWidget):
         pass
 
     def execute_if_settings_changed(self) -> None:
-        """ The app calls this method if any property in ub_settings changed"""
+        """ The app calls this method if any property in ub_settings has been changed"""
         pass

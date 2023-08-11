@@ -1,11 +1,10 @@
 
 from . import Property
-from PySide2.QtWidgets import QComboBox, QSizePolicy
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtWidgets import QComboBox, QSizePolicy
+from PySide6.QtCore import QCoreApplication
 
 
 class ComboBoxProperty(Property):
-
     def __init__(self,  items: list[str], translatable: bool = False, default_value: int=0, name="Unnamed", tool_tip=""):
         self.p_items = items
         self.p_translatable = translatable
@@ -13,11 +12,8 @@ class ComboBoxProperty(Property):
         self.p_tool_tip = tool_tip
         self._value = default_value
 
-    def get_current_item_text(self) -> int:
-        if self._value < len(self.p_items):
-            return self.p_items[self._value]
-        else:
-            return -1
+    def get_current_item_text(self) -> str:
+        return QCoreApplication.translate("properties", self.p_items[self._value]) if self.p_translatable else self.p_items[self._value]
 
     def get_input_widget(self) -> QComboBox:
         self._widget_ref = QComboBox()
@@ -34,9 +30,11 @@ class ComboBoxProperty(Property):
 
     def set_value(self, value: int) -> None:
         if value < 0:
-            self.set_value(0)
+            self._value = 0
         elif value >= len(self.p_items):
-            self.set_value(len(self.p_items) - 1)
+            self._value = len(self.p_items) - 1
+        else:
+            self._value = value
 
     def retranslate(self) -> None:
         self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))

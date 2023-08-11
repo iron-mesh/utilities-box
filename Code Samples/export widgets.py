@@ -1,4 +1,4 @@
-from PySide2.QtWidgets import QWidget,QPushButton, QVBoxLayout, QApplication, QTabWidget
+from PySide6.QtWidgets import QWidget,QPushButton, QVBoxLayout, QApplication, QTabWidget
 import sys
 import reg_widget
 

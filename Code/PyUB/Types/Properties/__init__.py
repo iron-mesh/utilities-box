@@ -10,4 +10,5 @@ from .FilePathProperty import FilePathProperty
 from .ComboBoxProperty import ComboBoxProperty
 from .StringListProperty import StringListProperty
 from .FilePathListProperty import FilePathListProperty
+from .NamedFilePathListProperty import NamedFilePathListProperty
 from .FontSelectProperty import FontSelectProperty

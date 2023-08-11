@@ -1,7 +1,7 @@
 
 from . import Property
-from PySide2.QtWidgets import QLineEdit
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtWidgets import QLineEdit
+from PySide6.QtCore import QCoreApplication
 
 
 class StringProperty(Property):

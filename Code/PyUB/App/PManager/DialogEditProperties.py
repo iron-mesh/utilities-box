@@ -1,13 +1,13 @@
 import sys, os, logging, math, traceback
 
-import PySide2.QtWidgets
-from PySide2.QtWidgets import QDialog
-from .ui_forms import Ui_Dialog
+import PySide6.QtWidgets
+from PySide6.QtWidgets import QDialog
+from ..ui_forms import Ui_Dialog
 from .FailWidget import FailWidget
 
-from . constants import *
-from . import lang_constants as lc
-from .types import PluginListItem
+from .. constants import *
+from .. import lang_constants as lc
+from .PMtypes import PluginListItem
 
 logging.basicConfig(level=logging.DEBUG)
 if(LOGGING_DISABLED):
@@ -38,7 +38,7 @@ class DialogEditProperties(QDialog):
             self.retranslate(error_occured=True)
             self._error_occured = True
 
-        screen = PySide2.QtWidgets.QApplication.primaryScreen()
+        screen = PySide6.QtWidgets.QApplication.primaryScreen()
         width = screen.availableSize().width() if screen.availableSize().width() < 800 else 800
         height = math.trunc(screen.availableSize().height() * .8)
         self.resize(width, height)

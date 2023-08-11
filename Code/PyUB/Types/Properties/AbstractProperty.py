@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any
-from PySide2.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget
 
 class AbstractProperty(metaclass=ABCMeta):
 
@@ -11,12 +11,12 @@ class AbstractProperty(metaclass=ABCMeta):
 
     @abstractmethod
     def value(self) -> Any:
-        """Returns property's value"""
+        """Return property's value"""
         pass
 
     @abstractmethod
     def set_value(self, value: Any) -> None:
-        """Sets property's value"""
+        """Set property's value"""
         pass
 
     @abstractmethod
@@ -29,7 +29,7 @@ class AbstractProperty(metaclass=ABCMeta):
 
     @abstractmethod
     def get_input_widget(self) -> QWidget:
-        """Returns widget for data input"""
+        """Return widget for data input"""
         pass
 
     @abstractmethod

@@ -1,6 +1,6 @@
 
 from . import StringProperty
-from PySide2.QtWidgets import QLineEdit
+from PySide6.QtWidgets import QLineEdit
 
 
 class PasswordStringProperty(StringProperty):

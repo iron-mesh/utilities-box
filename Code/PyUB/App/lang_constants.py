@@ -1,5 +1,5 @@
 
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtCore import QCoreApplication
 
 CONFIGURATE = QCoreApplication.translate("mainwindow", "Configurate")
 SWITCH_PLUGIN_BTN_ENABLED = QCoreApplication.translate("mainwindow", "Enabled")

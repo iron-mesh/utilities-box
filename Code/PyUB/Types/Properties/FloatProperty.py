@@ -1,7 +1,7 @@
 
 from . import Property
-from PySide2.QtWidgets import QDoubleSpinBox, QSizePolicy
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtWidgets import QDoubleSpinBox, QSizePolicy
+from PySide6.QtCore import QCoreApplication
 import math
 
 class FloatProperty(Property):
@@ -38,11 +38,11 @@ class FloatProperty(Property):
 
     def set_value(self, value: float) -> None:
         if value < self.p_minimum:
-            self.set_value(self.p_minimum)
+            self._value = self.p_minimum
         elif value > self.p_maximum:
-            self.set_value(self.p_maximum)
+            self._value = self.p_maximum
         else:
-            self.set_value(value)
+            self._value = value
 
     def retranslate(self) -> None:
         self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))

@@ -1,17 +1,17 @@
 
 from ..UBoxSettings import UBoxSettings
-from ..FailWidget import FailWidget
+from .FailWidget import FailWidget
 from ..ui_forms import Ui_MainWindow
-from ..types import PluginListItem, PluginParameters, AppDataKeys
+from .PMtypes import PluginListItem, PluginParameters
 import Code.PyUB.utils as utils
 from Code.PyUB.Types.InputWidgets import CheckableButton
 from Code.PyUB.Types import UBWidget
 import os, sys, shelve, pickle, importlib, traceback, logging
 from ..constants import *
 from .. import lang_constants as lc
-from ..DialogEditProperties import DialogEditProperties
-from PySide2.QtWidgets import QMainWindow, QTabWidget, QScrollArea, QProgressDialog,QWidget, QDialog, QSpacerItem, QHBoxLayout, QSizePolicy, QGridLayout, QLabel, QPushButton
-from PySide2.QtCore import Qt,Slot
+from .DialogEditProperties import DialogEditProperties
+from PySide6.QtWidgets import QMainWindow, QTabWidget, QScrollArea, QProgressDialog,QWidget, QDialog, QSpacerItem, QHBoxLayout, QSizePolicy, QGridLayout, QLabel, QPushButton
+from PySide6.QtCore import Qt, Slot
 
 
 class PluginManager:
@@ -25,13 +25,13 @@ class PluginManager:
         if not hasattr(self, "plugins_loaded"):
             self.plugins_loaded = True
             sys.path.append(plugins_dir_path)
-            self._plugins = {}
-        self._twidget.clear()
+            self._plugins = dict()
 
-        plugin_dir_list = os.listdir(os.path.abspath(plugins_dir_path))
+        self._twidget.clear()
+        plugin_dir_list = os.listdir(plugins_dir_path)
 
         with shelve.open(PLUGINS_DATA_PATH) as data:
-            for num, dir in enumerate(plugin_dir_list):
+            for dir in plugin_dir_list:
 
                 if (dir in FOLDER_NAMES_IGNORE_LIST):
                     continue
@@ -39,7 +39,6 @@ class PluginManager:
 
                 if (dir not in self._plugins):
                     self._plugins[dir] = PluginListItem()
-
                 try:
                     if not self._plugins[dir].module:
                         self._plugins[dir].module = importlib.import_module(dir)
@@ -59,11 +58,13 @@ class PluginManager:
                 if dir in data:
                     if hasattr(self._plugins[dir].ubwidget_class, "ub_settings"):
                         self._plugins[dir].ubwidget_class.ub_settings.set_propvalues_from_dict(data[dir].settings_prop_values)
+                        self._plugins[dir].ubwidget_class.ub_settings.set_prop_params_from_dict(data[dir].settings_params_dict)
                     self._plugins[dir].is_enabled = data[dir].is_enabled
                 else:
                     pl_params = PluginParameters()
                     if hasattr(self._plugins[dir].ubwidget_class, "ub_settings"):
                         pl_params.settings_prop_values = self._plugins[dir].ubwidget_class.ub_settings.propvalues_to_dict()
+                        pl_params.settings_params_dict = self._plugins[dir].ubwidget_class.ub_settings.prop_params_to_dict()
                     data[dir] = pl_params
 
                 self._plugins[dir].plugin_name = self._plugins[dir].ubwidget_class.ub_name if hasattr \
@@ -76,7 +77,7 @@ class PluginManager:
         self._controlarea.setWidget(self._render_plugins_control_widget())
         utils.ubwidgets_list.clear()
         self._twidget.currentChanged.connect(self._on_tab_changed)
-        self._on_tab_changed(2)
+        self._on_tab_changed(0)
 
     def _render_plugins_control_widget(self) -> QWidget:
 
@@ -130,8 +131,8 @@ class PluginManager:
             layout.addWidget(config_btn, i, 3, Qt.AlignCenter)
 
         h_layout.addItem(h_spacer2)
-        layout.addItem(v_spacer, row=row_counter + 1, column=3)
-        layout.addItem(h_spacer, row=0, column=1)
+        layout.addItem(v_spacer, row_counter + 1, 3)
+        layout.addItem(h_spacer, 0, 1)
         return widget
 
     def _save_plugin_settings(self, plugin: PluginListItem):
@@ -161,7 +162,11 @@ class PluginManager:
                         self._twidget.addTab(plugin.ubwidget_class(), pl_name)
                     else:
                         for j in range(self._twidget.count()):
-                            if type(self._twidget.widget(j)) is plugin.ubwidget_class:
+                            widget = self._twidget.widget(j)
+                            if type(widget) is plugin.ubwidget_class:
+                                self._twidget.removeTab(j)
+                                break
+                            elif (type(widget) is QWidget) and (widget.load_key == plugin.plugin_dir):
                                 self._twidget.removeTab(j)
                                 break
 
@@ -176,7 +181,7 @@ class PluginManager:
             except Exception as exc:
                 # pass
                 new_widget = FailWidget()
-                new_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[key].ubwidget_class,                                                                      traceback_info=traceback.format_exc()))
+                new_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[key].ubwidget_class, traceback_info=traceback.format_exc()))
             finally:
                 self._twidget.removeTab(index)
                 self._twidget.insertTab(index, new_widget, self._plugins[key].plugin_name)

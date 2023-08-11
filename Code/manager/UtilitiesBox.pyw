@@ -9,14 +9,13 @@ def setup():
 
 setup()
 
-from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import QFont
-from Code.PyUB.App import UtilitiesBoxMainWindow
+from PySide6.QtWidgets import QApplication
+from Code.PyUB.App import UBoxMainWindow
 
 
 app = QApplication(sys.argv)
-window = UtilitiesBoxMainWindow()
+window = UBoxMainWindow()
 window.showMaximized()
 window.show()
-sys.exit(app.exec_())
+sys.exit(app.exec())
 

@@ -1,6 +1,6 @@
 
-from PySide2.QtWidgets import QInputDialog, QListWidgetItem, QFileDialog
-from PySide2.QtCore import Signal, Slot, QCoreApplication
+from PySide6.QtWidgets import QInputDialog, QListWidgetItem, QFileDialog
+from PySide6.QtCore import Signal, Slot, QCoreApplication
 from . import StringListInput
 from .PathInput import PathInputMode
 import logging
@@ -24,7 +24,7 @@ class FilePathListInput(StringListInput):
         self._mode = mode
 
     def mode(self)->PathInputMode:
-        """Get mode of input"""
+        """Return input mode (file selection, directory selections)"""
         return self._mode
 
     def set_file_filter(self, filter: str = "(*.*)") -> None:
@@ -33,7 +33,7 @@ class FilePathListInput(StringListInput):
         self._file_filter = filter
 
     def file_filter(self) -> str:
-        """Return Tuple(filter label, filter)
+        """Return file filter
         For example: (Sound, (*.mp3))"""
         return (self._file_filter)
 
@@ -52,7 +52,7 @@ class FilePathListInput(StringListInput):
             path: str = QFileDialog.getExistingDirectory(None, QCoreApplication.translate("input_widgets", "Select Existing File"), "",
                                                          QFileDialog.ShowDirsOnly)
         elif (self._mode == PathInputMode.FileOpen):
-            path: str = QFileDialog.getOpenFileName(None, QCoreApplication.translate("input_widgets", "Select Existing Directory"), "", f"{self.file_filter()[0]} {self.file_filter()[1]}")[0]
+            path: str = QFileDialog.getOpenFileName(None, QCoreApplication.translate("input_widgets", "Select Existing Directory"), "", self.file_filter())[0]
         if path and not(self._path_is_exist(path) and self.unique_only):
             self.listWidget.addItem(path)
 
@@ -64,7 +64,7 @@ class FilePathListInput(StringListInput):
         if (self._mode == PathInputMode.Directory):
             path: str = QFileDialog.getExistingDirectory(None, QCoreApplication.translate("input_widgets", "Select Existing File"), item.text(), QFileDialog.ShowDirsOnly)
         elif (self._mode == PathInputMode.FileOpen):
-            path: str = QFileDialog.getOpenFileName(None, QCoreApplication.translate("input_widgets", "Select Existing Directory"), item.text(), f"{self.file_filter()[0]} {self.file_filter()[1]}")[0]
+            path: str = QFileDialog.getOpenFileName(None, QCoreApplication.translate("input_widgets", "Select Existing Directory"), item.text(), self.file_filter())[0]
 
         if path and not(self._path_is_exist(path) and self.unique_only):
             item.setText(path)

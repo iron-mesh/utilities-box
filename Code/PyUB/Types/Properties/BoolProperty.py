@@ -1,8 +1,8 @@
 
 from . import Property
-from PySide2.QtWidgets import QCheckBox
-from  PySide2.QtCore import Qt
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtWidgets import QCheckBox
+from  PySide6.QtCore import Qt
+from PySide6.QtCore import QCoreApplication
 
 class BoolProperty(Property):
 

@@ -4,4 +4,4 @@ import transmitter
 
 print("receiver has been loaded")
 print(f"pool.global list: {global_list}")
-import PySide2.QtWidgets
+import PySide6.QtWidgets

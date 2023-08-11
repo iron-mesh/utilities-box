@@ -1,8 +1,8 @@
 
 from . import Property
-from PySide2.QtWidgets import QSizePolicy, QFontComboBox
-from PySide2.QtGui import QFont
-from PySide2.QtCore import QCoreApplication
+from PySide6.QtWidgets import QSizePolicy, QFontComboBox
+from PySide6.QtGui import QFont
+from PySide6.QtCore import QCoreApplication
 
 
 class FontSelectProperty(Property):
@@ -18,6 +18,14 @@ class FontSelectProperty(Property):
         self._widget_ref.setSizePolicy(QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed))
         self._widget_ref.setCurrentIndex(self._value)
         return self._widget_ref
+
+    def get_current_font(self) -> QFont:
+        if (hasattr(self, "_widget_ref")):
+            return self._widget_ref.currentFont()
+        else:
+            font_combobox = QFontComboBox()
+            font_combobox.setCurrentIndex(self._value)
+            return font_combobox.currentFont()
 
     def extract_widget_data(self) -> bool:
         has_value_changed: bool = False

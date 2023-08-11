@@ -1,3 +1,3 @@
 
-from .UtilitiesBoxMainWindow import UtilitiesBoxMainWindow
+from .UBoxMainWindow import UBoxMainWindow
 

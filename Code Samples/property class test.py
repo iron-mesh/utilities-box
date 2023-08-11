@@ -1,5 +1,5 @@
 
-import PySide2.QtWidgets, json, logging
+import PySide6.QtWidgets, json, logging
 logging.basicConfig(level=logging.DEBUG)
 
 

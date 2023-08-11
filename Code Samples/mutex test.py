@@ -1,6 +1,6 @@
 
 
-from PySide2.QtCore import QMutex, QMutexLocker, QReadWriteLock, QThread
+from PySide6.QtCore import QMutex, QMutexLocker, QReadWriteLock, QThread
 import sys
 
 

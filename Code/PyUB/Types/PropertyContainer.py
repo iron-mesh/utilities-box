@@ -1,5 +1,5 @@
-from PySide2.QtWidgets import QWidget, QFormLayout, QLabel, QScrollArea, QHBoxLayout, QSizePolicy
-from PySide2.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QFormLayout, QLabel, QScrollArea, QHBoxLayout, QSizePolicy
+from PySide6.QtCore import Qt
 from .Properties import AbstractProperty
 from typing import Any
 import pickle
@@ -28,18 +28,18 @@ class PropertyContainer:
 
     @classmethod
     def get_property(cls, name: str) -> AbstractProperty:
-        """ Returns property instance with <name>"""
+        """ Return property instance with <name>"""
         return cls.__annotations__[name]
 
     @classmethod
     def get_property_value(cls, name: str) -> Any:
-        """ Returns the value of a property with <name> """
+        """ Return the value of a property with <name> """
         return cls.__annotations__[name].value()
 
     @classmethod
     def update_data(cls) -> bool:
-        """ Extracts data from gui widgets
-        Returns True if any value is changed, False - otherwise"""
+        """ Extract data from gui widgets
+        Return True if any value is changed, False - otherwise"""
         is_updated:bool = False
 
         for key, prop in cls.__annotations__.items():
@@ -59,12 +59,28 @@ class PropertyContainer:
 
     @classmethod
     def set_propvalues_from_dict(cls, prop_dict: dict[str, (AbstractProperty, Any)]) -> None:
-        """ Recieves dictionary of properties values and rewrite properties values"""
+        """ Recieve dictionary of properties values and rewrite properties values"""
         for key, prop in cls.__annotations__.items():
             if (key in prop_dict) \
                     and (isinstance(prop, prop_dict[key][0]))\
                     and (isinstance(prop_dict[key][1], type(prop.value()))):
                 prop.set_value(prop_dict[key][1])
+
+    @classmethod
+    def prop_params_to_dict(cls) -> dict[str, (AbstractProperty, dict)]:
+        """ Return dictionary of properties parameters"""
+        prop_params_dict = {}
+        for name, prop in cls.__annotations__.items():
+            prop_params_dict[name] = (type(prop), prop.get_parameters_dict())
+        return prop_params_dict
+
+    @classmethod
+    def set_prop_params_from_dict(cls, params_dict: dict[str, (AbstractProperty, dict)]) -> None:
+        """ Recieve dictionary of properties parameters and rewrite properties parameters"""
+        for name, prop in cls.__annotations__.items():
+            if (name in params_dict) \
+                    and (isinstance(prop, params_dict[name][0])):
+                prop.set_parameters_from_dict(params_dict[name][1])
 
     @classmethod
     def retranslate(cls) -> None:
