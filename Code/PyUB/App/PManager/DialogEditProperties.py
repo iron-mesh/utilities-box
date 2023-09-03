@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QDialog
 from ..ui_forms import Ui_Dialog
 from .FailWidget import FailWidget
 
-from .. constants import *
+from .. parameters import *
 from .. import lang_constants as lc
 from .PMtypes import PluginListItem
 
@@ -39,7 +39,7 @@ class DialogEditProperties(QDialog):
             self._error_occured = True
 
         screen = PySide6.QtWidgets.QApplication.primaryScreen()
-        width = screen.availableSize().width() if screen.availableSize().width() < 800 else 800
+        width = screen.availableSize().width() * 0.8
         height = math.trunc(screen.availableSize().height() * .8)
         self.resize(width, height)
 

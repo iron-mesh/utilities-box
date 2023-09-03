@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UtilitiesBoxMainWindowrEDvxU.ui'
+## Form generated from reading UI file 'UtilitiesBoxMainWindowuGIcEW.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.0
+## Created by: Qt User Interface Compiler version 6.5.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -16,11 +16,11 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QFrame,
-    QHBoxLayout, QLabel, QListView, QMainWindow,
-    QMenu, QMenuBar, QPushButton, QScrollArea,
-    QSizePolicy, QSpacerItem, QStackedWidget, QStatusBar,
-    QTabWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplication, QComboBox,
+    QFrame, QHBoxLayout, QLabel, QListView,
+    QMainWindow, QMenu, QMenuBar, QPushButton,
+    QScrollArea, QSizePolicy, QSpacerItem, QStackedWidget,
+    QStatusBar, QTabWidget, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -52,6 +52,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidgetPlugins = QTabWidget(self.widgets_page)
         self.tabWidgetPlugins.setObjectName(u"tabWidgetPlugins")
+        self.tabWidgetPlugins.setElideMode(Qt.ElideNone)
         self.tabWidgetPlugins.setDocumentMode(False)
         self.tabWidgetPlugins.setTabsClosable(False)
         self.tabWidgetPlugins.setMovable(True)
@@ -89,7 +90,7 @@ class Ui_MainWindow(object):
 
         self.btnReloadPlugins = QPushButton(self.plugins_list)
         self.btnReloadPlugins.setObjectName(u"btnReloadPlugins")
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.btnReloadPlugins.sizePolicy().hasHeightForWidth())
@@ -292,6 +293,8 @@ class Ui_MainWindow(object):
 
         self.listViewLogs = QListView(self.logs)
         self.listViewLogs.setObjectName(u"listViewLogs")
+        self.listViewLogs.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.listViewLogs.setWordWrap(True)
 
         self.verticalLayout_5.addWidget(self.listViewLogs)
 
@@ -329,7 +332,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(0)
         self.tabWidgetPlugins.setCurrentIndex(1)
 
 

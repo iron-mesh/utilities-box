@@ -1,5 +1,5 @@
 
-from PySide6.QtWidgets import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy, QDialog, QApplication
+from PySide6.QtWidgets import QMainWindow, QWidget, QGridLayout, QHBoxLayout, QPushButton, QLabel, QSpacerItem, QSizePolicy, QDialog, QApplication,QMessageBox
 from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QFont
 
@@ -7,7 +7,7 @@ from .UBoxSettings import UBoxSettings
 from .ui_forms import Ui_MainWindow
 from .app_types import  AppDataKeys
 import os, sys, shelve, pickle
-from .constants import *
+from .parameters import *
 from . import lang_constants as lc
 from .PManager import PluginManager
 
@@ -32,6 +32,7 @@ class UBoxMainWindow(QMainWindow):
         self.plugin_manager = PluginManager(self)
         self.plugin_manager.set_qtabwidget(self.ui.tabWidgetPlugins)
         self.plugin_manager.set_controlarea(self.ui.scrollAreaPlugins)
+        self.plugin_manager.set_log_view(self.ui.listViewLogs)
 
         self._init_link_handlers()
 
@@ -98,6 +99,7 @@ class UBoxMainWindow(QMainWindow):
             with shelve.open(APP_DATA_PATH) as data:
                 data[AppDataKeys.SettingsDict] = self._settings.propvalues_to_dict()
             self._apply_settings()
+        QMessageBox.information(self, lc.DIALOG_TITLE_WARNING, lc.DIALOG_APPLY_AFTER_RESTART)
 
     def _apply_settings(self):
         app = QApplication.instance()

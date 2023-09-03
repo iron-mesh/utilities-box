@@ -1,5 +1,5 @@
 
-from PySide6.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QSpacerItem ,QSizePolicy, QInputDialog, QListWidgetItem
+from PySide6.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QSpacerItem ,QSizePolicy, QInputDialog, QListWidgetItem, QApplication
 from PySide6.QtCore import Signal, Slot, QCoreApplication
 import logging
 
@@ -18,6 +18,7 @@ class StringListInput(QWidget):
         self.listWidget = QListWidget()
 
         self.listWidget.itemDoubleClicked.connect(self._edit_item)
+        self.listWidget.setFont(QApplication.font())
         horizontalLayout.addWidget(self.listWidget)
         horizontalLayout.setContentsMargins(0, 0, 0, 0)
 

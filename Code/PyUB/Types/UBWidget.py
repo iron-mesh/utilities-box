@@ -2,6 +2,9 @@
 from PySide6.QtWidgets import QWidget
 
 class UBWidget(QWidget):
+    #ub_name = "type plugin name"
+    #ub_settings = <link PropertyContainer class>
+    #ub_description = "Plugin description"
 
     def __init__(self) -> None:
         super().__init__()
@@ -10,10 +13,10 @@ class UBWidget(QWidget):
         """ The app calls this method when a user changes plugin's language"""
         pass
 
-    def execute_before_closing(self) -> None:
+    def app_closing(self) -> None:
         """ The app calls this method before closing"""
         pass
 
-    def execute_if_settings_changed(self) -> None:
+    def settings_changed(self) -> None:
         """ The app calls this method if any property in ub_settings has been changed"""
         pass

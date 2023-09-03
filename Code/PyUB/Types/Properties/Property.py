@@ -21,7 +21,7 @@ class Property(AbstractProperty):
 
     def get_parameters_dict(self) -> dict[str, Any]:
         """ Get property parameters dict"""
-        return {key: value for key, value in vars(self).items() if key[0:2] == "p_"}
+        return {key: value for key, value in vars(self).items() if key.startswith("p_")}
 
     def set_parameters_from_dict(self, params: dict[str, Any]) -> None:
         """ Set property parameters from dict"""

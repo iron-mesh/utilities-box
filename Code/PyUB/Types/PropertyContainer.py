@@ -7,6 +7,13 @@ import pickle
 
 class PropertyContainer:
 
+
+    def __getattr__(self, item):
+        if item in self.__annotations__:
+            return self.get_property_value(item)
+        else:
+            raise AttributeError(f"<{item}> doesn't exist")
+
     @classmethod
     def render_layout(cls) -> QWidget:
         """Return QWidget instance with placed widgets for values input"""
@@ -20,6 +27,7 @@ class PropertyContainer:
         cls._lable_list = {}
         for key, prop in cls.__annotations__.items():
             cls._lable_list[key] = QLabel(prop.get_name())
+            cls._lable_list[key].setWordWrap(True)
             layout.setWidget(row, QFormLayout.LabelRole, cls._lable_list[key])
             layout.setWidget(row, QFormLayout.FieldRole, prop.get_input_widget())
             row += 1
@@ -40,10 +48,10 @@ class PropertyContainer:
     def update_data(cls) -> bool:
         """ Extract data from gui widgets
         Return True if any value is changed, False - otherwise"""
-        is_updated:bool = False
+        is_updated = False
 
         for key, prop in cls.__annotations__.items():
-            update_status:bool = prop.extract_widget_data()
+            update_status = prop.extract_widget_data()
             if not is_updated and update_status:
                 is_updated = True
         return is_updated
