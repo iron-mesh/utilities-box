@@ -7,6 +7,7 @@ class PluginListItem:
     """Save plugin parameters in runtime"""
     module = None
     plugin_name: str = ""
+    plugin_short_name:str = ""
     ubwidget_class = None
     is_enabled: bool = True
     init_on_startup: bool = False

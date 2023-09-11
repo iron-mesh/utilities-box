@@ -15,7 +15,7 @@ if(LOGGING_DISABLED):
     logging.disable(logging.CRITICAL)
 
 
-class DialogShowDescription(QDialog):
+class DialogPluginInfo(QDialog):
     """ Dialog window for values editing in PropertyContainer"""
 
     def __init__(self, parent):

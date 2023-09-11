@@ -9,11 +9,13 @@ import os, sys, shelve, pickle, importlib, traceback, logging, time
 from ..parameters import *
 from .. import lang_constants as lc
 from .DialogEditProperties import DialogEditProperties
-from .DialogShowDescription import DialogShowDescription
+from .DialogPluginInfo import DialogPluginInfo
 from PySide6.QtCore import QObject, Qt
 from PySide6.QtGui import QCursor, QStandardItemModel, QStandardItem, QColor
-from PySide6.QtWidgets import QMainWindow, QTabWidget, QScrollArea, QWidget, QDialog, QSpacerItem, QHBoxLayout, QSizePolicy, QGridLayout, QLabel, QPushButton, QMenu, QApplication, QListView
+from PySide6.QtWidgets import QMainWindow, QTabWidget, QScrollArea, QWidget, QDialog, QSpacerItem, QHBoxLayout, QSizePolicy, QGridLayout, QLabel, QPushButton, QMenu, QApplication, QListView, QMessageBox
 from PySide6.QtCore import Qt, Slot
+from collections import OrderedDict
+from typing import Iterator
 
 
 class PluginManager(QObject):
@@ -22,93 +24,131 @@ class PluginManager(QObject):
         self._parent = parent
         self._app_settings:UBoxSettings = parent._settings
 
-    def load_plugins(self):
-        packagedir_list =[PackageDirItem("", path:=os.path.abspath(r"Plugins"), os.listdir(path))]
-        for nickname, path in self._app_settings.get_property_value("external_plugin_dir"):
-            if not os.path.exists(path) or not os.listdir(path): continue
-            packagedir_list.append(PackageDirItem(nickname, path, os.listdir(path)))
-
-        self._twidget.currentChanged.disconnect(self._on_tab_changed)
-
+    def init_plugins(self):
         if not hasattr(self, "plugins_loaded"):
             self.plugins_loaded = True
-            self._plugins = dict()
+            self._plugins = OrderedDict()
 
-        self._twidget.clear()
+        packagedir_list = [("", os.path.abspath(r"Plugins"))]
+        packagedir_list.extend(self._app_settings.get_property_value("external_plugin_dir"))
+
+        for nickname, path in packagedir_list:
+            for dir in os.listdir(path):
+                package_key = str((nickname, dir))
+                if (dir.lower() in FOLDER_NAMES_IGNORE_LIST) or package_key in self._plugins:
+                    continue
+                self._plugins[package_key] = PluginListItem()
+                self._plugins[package_key].plugin_dirsite = path
+                self._plugins[package_key].plugin_dir_name = dir
+
+        self._load_plugins(list(self._plugins.keys()), clear_load=True)
+        self._controlarea.setWidget(self._render_plugins_control_widget())
+        self._on_tab_changed(0)
+
+    def _load_plugins(self, key_list:list[str], reset_settings=False, clear_load=False):
+        if len(key_list) == 0: return
+
+        if clear_load:
+            self._twidget.clear()
+
+        cur_package_site = ""
+        self._twidget.currentChanged.disconnect(self._on_tab_changed)
 
         with shelve.open(PLUGINS_DATA_PATH) as data:
+            for key in key_list:
+                cur_plugin = self._plugins[key]
+                cur_plugin.plugin_db_key = key
+                utils.ubwidgets_list.clear()
 
-            for i in packagedir_list:
-                sys.path.append(i.dir_abspath)
+                if not clear_load:
+                    tw = self._twidget
+                    for i in range(tw.count()):
+                        if isinstance(tw.widget(i), cur_plugin.ubwidget_class) or (isinstance(tw.widget(i), QWidget) and tw.widget(i).load_key == key):
+                            tw.removeTab(i)
 
-                for package in i.package_list:
-                    package_key = str((i.dir_nickname, package))
+                if cur_package_site != cur_plugin.plugin_dirsite:
+                    if cur_package_site in sys.path: sys.path.remove(cur_package_site)
+                    cur_package_site = cur_plugin.plugin_dirsite
+                    sys.path.append(cur_package_site)
 
-                    if (package.lower() in FOLDER_NAMES_IGNORE_LIST):
-                        continue
-                    utils.ubwidgets_list.clear()
-
-                    if (package_key not in self._plugins):
-                        self._plugins[package_key] = PluginListItem()
-                    try:
-                        if not self._plugins[package_key].module:
-                            self._plugins[package_key].module = importlib.import_module(package)
-                            self._add_log_message(lc.LOG_PACKAGE_HASBEEN_LOADED_SUCCESS.format(name=self._plugins[package_key].module),"green")
-                        else:
-                            self._plugins[package_key].module = importlib.reload(self._plugins[package_key].module)
-                            self._add_log_message(lc.LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS.format(name=self._plugins[package_key].module),"green")
-                    except Exception:
-                        del self._plugins[package_key]
-                        package_path = i.dir_abspath + os.sep + package
-                        self._add_log_message(lc.LOG_PACKAGE_IMPORT_FAIL.format(path=package_path), "red")
-                        continue
-
-                    if len(utils.ubwidgets_list) == 1 and issubclass(utils.ubwidgets_list[0], UBWidget):
-                        self._plugins[package_key].plugin_dir = package
-                        self._plugins[package_key].plugin_db_key = package_key
-                        self._plugins[package_key].plugin_absdirpath = i.dir_abspath + os.sep + package
-                        self._plugins[package_key].ubwidget_class = utils.ubwidgets_list[0]
+                try:
+                    if not cur_plugin.module:
+                        cur_plugin.module = importlib.import_module(cur_plugin.plugin_dir_name)
+                        self._add_log_message(
+                            lc.LOG_PACKAGE_HASBEEN_LOADED_SUCCESS.format(name=cur_plugin.module),
+                            "green")
                     else:
-                        del self._plugins[package_key]
-                        continue
+                        cur_plugin.module = importlib.reload(cur_plugin.module)
+                        self._add_log_message(
+                            lc.LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS.format(name=cur_plugin.module),
+                            "green")
+                except Exception:
+                    package_dir = cur_plugin.plugin_dirsite
+                    package_name = cur_plugin.plugin_dir_name
+                    package_path = package_dir + os.sep + package_name
+                    self._add_log_message(lc.LOG_PACKAGE_IMPORT_FAIL.format(path=package_path), "red")
+                    if not cur_plugin.module:
+                        del self._plugins[key]
+                    continue
 
-                    if package_key in data:
-                        if hasattr(self._plugins[package_key].ubwidget_class, "ub_settings"):
-                            self._plugins[package_key].ubwidget_class.ub_settings.set_prop_params_from_dict(data[package_key].settings_params_dict)
-                            self._plugins[package_key].ubwidget_class.ub_settings.set_propvalues_from_dict(data[package_key].settings_prop_values)
-                        self._plugins[package_key].is_enabled = data[package_key].enabled
-                        self._plugins[package_key].init_on_startup = data[package_key].init_on_startup
+                if len(utils.ubwidgets_list) == 1 and issubclass(utils.ubwidgets_list[0], UBWidget):
+                    cur_plugin.ubwidget_class = utils.ubwidgets_list[0]
+                else:
+                    continue
+
+                try:
+                    if key in data:
+                        if hasattr(cur_plugin.ubwidget_class, "ub_settings"):
+                            if reset_settings:
+                                data_item:PluginParameters = data[key]
+                                data_item.settings_params_dict = cur_plugin.ubwidget_class.ub_settings.prop_params_to_dict()
+                                data_item.settings_prop_values = cur_plugin.ubwidget_class.ub_settings.propvalues_to_dict()
+                                data[key] = data_item
+                            else:
+                                cur_plugin.ubwidget_class.ub_settings.set_prop_params_from_dict(data[key].settings_params_dict)
+                                cur_plugin.ubwidget_class.ub_settings.set_propvalues_from_dict(data[key].settings_prop_values)
+                        cur_plugin.is_enabled = data[key].enabled
+                        cur_plugin.init_on_startup = data[key].init_on_startup
                     else:
                         pl_params = PluginParameters()
-                        if hasattr(self._plugins[package_key].ubwidget_class, "ub_settings"):
-                            pl_params.settings_prop_values = self._plugins[package_key].ubwidget_class.ub_settings.propvalues_to_dict()
-                            pl_params.settings_params_dict = self._plugins[package_key].ubwidget_class.ub_settings.prop_params_to_dict()
-                        data[package_key] = pl_params
+                        if hasattr(cur_plugin.ubwidget_class, "ub_settings"):
+                            pl_params.settings_prop_values = cur_plugin.ubwidget_class.ub_settings.propvalues_to_dict()
+                            pl_params.settings_params_dict = cur_plugin.ubwidget_class.ub_settings.prop_params_to_dict()
+                        data[key] = pl_params
+                except Exception:
+                    self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=cur_plugin.module),"red")
+                    continue
 
-                    self._plugins[package_key].plugin_name = self._plugins[package_key].ubwidget_class.ub_name if hasattr \
-                        (self._plugins[package_key].ubwidget_class, "ub_name") else self._plugins[package_key].plugin_dir
-                    if self._plugins[package_key].is_enabled:
-                        if self._plugins[package_key].init_on_startup:
-                            try:
-                                widget = self._plugins[package_key].ubwidget_class()
-                            except Exception as exc:
-                                widget = FailWidget()
-                                widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[package_key].ubwidget_class, traceback_info=traceback.format_exc()))
-                            finally:
-                                widget.load_key = package_key
-                                self._twidget.addTab(widget, self._plugins[package_key].plugin_name)
+                if hasattr(cur_plugin.ubwidget_class, "ub_name") and type(cur_plugin.ubwidget_class.ub_name) is str:
+                    cur_plugin.plugin_name = cur_plugin.ubwidget_class.ub_name
+                else:
+                    cur_plugin.plugin_name = cur_plugin.plugin_dir_name
+                cur_plugin.plugin_short_name = utils.crop_string(cur_plugin.plugin_name, 20)
 
-                        else:
-                            dummy_widget = QWidget()
-                            dummy_widget.load_key = package_key
-                            self._twidget.addTab(dummy_widget, "*" + self._plugins[package_key].plugin_name)
+                if cur_plugin.is_enabled:
+                    if cur_plugin.init_on_startup:
+                        try:
+                            widget = cur_plugin.ubwidget_class()
+                        except Exception as exc:
+                            widget = FailWidget()
+                            widget.set_error_msg(
+                                lc.ERROR_WIDGET_INIT.format(wgt_class=cur_plugin.ubwidget_class,
+                                                            traceback_info=traceback.format_exc()))
+                        finally:
+                            widget.load_key = key
+                            self._twidget.addTab(widget, cur_plugin.plugin_short_name)
 
-                sys.path.remove(i.dir_abspath)
+                    else:
+                        dummy_widget = QWidget()
+                        dummy_widget.load_key = key
+                        self._twidget.addTab(dummy_widget, "*" + cur_plugin.plugin_short_name)
 
-        self._controlarea.setWidget(self._render_plugins_control_widget())
+        sys.path.remove(cur_package_site)
         utils.ubwidgets_list.clear()
         self._twidget.currentChanged.connect(self._on_tab_changed)
-        self._on_tab_changed(0)
+
+    def _reload_plugin(self, plugin:PluginListItem):
+        self._load_plugins([plugin.plugin_db_key], reset_settings=True)
 
     def _render_plugins_control_widget(self) -> QWidget:
 
@@ -124,15 +164,12 @@ class PluginManager(QObject):
 
         row_counter: int = 0
         plugins = self._plugins
-        for i, key in enumerate(self._plugins.keys()):
+        for i, key in enumerate(plugins.keys()):
             row_counter = i
             label = QLabel()
-            if len(plugins[key].plugin_name) > 20:
-                name = self._crop_string(plugins[key].plugin_name, 20)
-                label.setText(name)
+            label.setText(plugins[key].plugin_short_name)
+            if plugins[key].plugin_name != plugins[key].plugin_short_name:
                 label.setToolTip(plugins[key].plugin_name)
-            else:
-                label.setText(plugins[key].plugin_name)
             logging.debug(len(plugins[key].plugin_name))
             label.setWordWrap(False)
             layout.addWidget(label, i, 0, Qt.AlignRight)
@@ -163,6 +200,7 @@ class PluginManager(QObject):
         return widget
 
     def _save_plugin_settings(self, plugin: PluginListItem):
+        '''Save settings of plugin on HDD'''
         with shelve.open(PLUGINS_DATA_PATH) as data:
             key = plugin.plugin_db_key
             if hasattr(plugin.ubwidget_class, "ub_settings"):
@@ -173,6 +211,7 @@ class PluginManager(QObject):
 
     @Slot()
     def _on_extra_btn(self):
+        '''Handle press on extra button on plugins page'''
         plugin = self.sender().plugin
         menu = QMenu(self._parent)
         menu.setFont(QApplication.font())
@@ -181,23 +220,30 @@ class PluginManager(QObject):
             nonlocal plugin
             plugin.init_on_startup = not plugin.init_on_startup
 
-        def show_description():
+        def show_info():
             nonlocal plugin
-            dialog = DialogShowDescription(self._parent)
-            dialog.setWindowTitle(lc.DESCRIPTION)
+            dialog = DialogPluginInfo(self._parent)
             dialog.set_text(plugin.ubwidget_class.ub_description)
             dialog.exec()
 
+        def reset_settings():
+            nonlocal plugin
+            answer = QMessageBox.question(self._parent, lc.RESET_SETTINGS, lc.QUESTION_RESET_SETTINGS)
+            if answer:
+                self._reload_plugin(plugin)
 
-        show_description_action = menu.addAction(lc.DESCRIPTION)
-        if hasattr(plugin.ubwidget_class, "ub_description") and plugin.ubwidget_class.ub_description:
-            show_description_action.triggered.connect(show_description)
+
+        show_description_action = menu.addAction(lc.INFO)
+        if hasattr(plugin.module, "ub_info"):
+            show_description_action.triggered.connect(show_info)
         else:
             show_description_action.setEnabled(False)
 
-
-        open_manual_action = menu.addAction(lc.OPEN_MANUAL)
-        open_manual_action.setEnabled(False)
+        reset_settings_action = menu.addAction(lc.RESET_SETTINGS)
+        if not hasattr(plugin.ubwidget_class, "ub_settings"):
+            reset_settings_action.setEnabled(False)
+        else:
+            reset_settings_action.triggered.connect(reset_settings)
 
         init_in_startup_action = menu.addAction(lc.INIT_ON_STARTUP)
         init_in_startup_action.setCheckable(True)
@@ -208,6 +254,7 @@ class PluginManager(QObject):
 
     @Slot()
     def _on_edit_prop_btn(self):
+        '''Handle press on "Configurate" button on plugins page'''
         plugin:PluginListItem = self.sender().plugin
         dialog = DialogEditProperties(self._parent, plugin)
         res = dialog.exec_()
@@ -221,11 +268,12 @@ class PluginManager(QObject):
 
     @Slot(bool)
     def _on_activate_btn(self, state: bool):
+        '''Handle press on 2 state button on plugins page'''
         plugin: PluginListItem = self.sender().plugin
         plugin.is_enabled = state
 
     def update_plugins(self, update_tabs=False):
-        """What does it do?"""
+        """Save extra settings of plugins on HDD and refresh tabs"""
         with shelve.open(PLUGINS_DATA_PATH) as data:
             for i, plugin in self._plugins.items():
                 key = plugin.plugin_db_key
@@ -244,7 +292,7 @@ class PluginManager(QObject):
                     if (not update_tabs): continue
 
                     if plugin.is_enabled:
-                        pl_name = plugin.plugin_name
+                        pl_name = plugin.plugin_short_name
                         widget = plugin.ubwidget_class()
                         widget.load_key = key
                         self._twidget.addTab(widget, pl_name)
@@ -255,6 +303,9 @@ class PluginManager(QObject):
                                 self._twidget.removeTab(j)
                                 break
 
+    def reload_plugins(self):
+        self.update_plugins(update_tabs=False)
+        self.init_plugins()
 
     @Slot(int)
     def _on_tab_changed(self, index:int):
@@ -271,13 +322,12 @@ class PluginManager(QObject):
             finally:
                 self._twidget.removeTab(index)
                 new_widget.load_key = key
-                self._twidget.insertTab(index, new_widget, self._plugins[key].plugin_name)
+                self._twidget.insertTab(index, new_widget, self._plugins[key].plugin_short_name)
                 self._twidget.setCurrentIndex(index)
             self._twidget.currentChanged.connect(self._on_tab_changed)
 
-
     def set_qtabwidget(self, twidget:QTabWidget):
-        self._twidget = twidget
+        self._twidget:QTabWidget = twidget
         twidget.currentChanged.connect(self._on_tab_changed)
 
     def set_controlarea(self, scroll_area:QScrollArea):
@@ -298,12 +348,3 @@ class PluginManager(QObject):
             case "green": item.setBackground(QColor(142, 255, 140))
         item.setFont(QApplication.font())
         self._log_model.insertRow(0, item)
-
-    def _crop_string(self, s:str, length:int):
-        if len(s) <= length:
-            return s
-        else:
-            return(s[0:length-1] + u"…")
-
-
-

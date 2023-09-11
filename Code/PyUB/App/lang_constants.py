@@ -15,7 +15,8 @@ ERROR_SETTING_RENDER_LAYOUT = QCoreApplication.translate("errors", "Settings lay
 
 OPEN_MANUAL = QCoreApplication.translate("mainwindow", "Open user manual")
 INIT_ON_STARTUP = QCoreApplication.translate("mainwindow", "Initialize on startup")
-DESCRIPTION = QCoreApplication.translate("mainwindow", "Description")
+INFO = QCoreApplication.translate("mainwindow", "Info")
+RESET_SETTINGS = QCoreApplication.translate("mainwindow", "Reset plugin settings")
 
 LOG_PACKAGE_HASBEEN_LOADED_SUCCESS = QCoreApplication.translate("Logs", "Package ({name}) has been imported successfully")
 LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS = QCoreApplication.translate("Logs", "Package ({name}) has been reloaded successfully")

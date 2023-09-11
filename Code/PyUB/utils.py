@@ -16,5 +16,12 @@ def register_ubwidget(widget: UBWidget) -> None:
     ubwidgets_list.append(widget)
 
 
+def crop_string(s:str, length:int):
+    if len(s) <= length:
+        return s
+    else:
+        return(s[0:length-1] + u"…")
+
+
 
 

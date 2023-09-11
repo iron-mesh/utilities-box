@@ -69,7 +69,7 @@ class UBoxMainWindow(QMainWindow):
 
     def show(self) -> None:
         super().show()
-        self.plugin_manager.load_plugins()
+        self.plugin_manager.init_plugins()
 
     def _on_reload_plugins(self):
         self.plugin_manager.update_plugins(update_tabs=False)
