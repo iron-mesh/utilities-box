@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UtilitiesBoxMainWindowuGIcEW.ui'
+## Form generated from reading UI file 'UtilitiesBoxMainWindowcVObTV.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -21,24 +21,36 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QMainWindow, QMenu, QMenuBar, QPushButton,
     QScrollArea, QSizePolicy, QSpacerItem, QStackedWidget,
     QStatusBar, QTabWidget, QVBoxLayout, QWidget)
+import res_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(894, 739)
+        icon = QIcon()
+        icon.addFile(u":/imgs/imgs/PyUB_Logo.svg", QSize(), QIcon.Normal, QIcon.Off)
+        MainWindow.setWindowIcon(icon)
         self.menu_settings = QAction(MainWindow)
         self.menu_settings.setObjectName(u"menu_settings")
+        font = QFont()
+        font.setPointSize(11)
+        self.menu_settings.setFont(font)
         self.menu_exit = QAction(MainWindow)
         self.menu_exit.setObjectName(u"menu_exit")
+        self.menu_exit.setFont(font)
         self.menu_manual = QAction(MainWindow)
         self.menu_manual.setObjectName(u"menu_manual")
+        self.menu_manual.setFont(font)
         self.menu_about = QAction(MainWindow)
         self.menu_about.setObjectName(u"menu_about")
+        self.menu_about.setFont(font)
         self.menu_plugins = QAction(MainWindow)
         self.menu_plugins.setObjectName(u"menu_plugins")
+        self.menu_plugins.setFont(font)
         self.menu_logs = QAction(MainWindow)
         self.menu_logs.setObjectName(u"menu_logs")
+        self.menu_logs.setFont(font)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout_4 = QVBoxLayout(self.centralwidget)
@@ -52,7 +64,6 @@ class Ui_MainWindow(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.tabWidgetPlugins = QTabWidget(self.widgets_page)
         self.tabWidgetPlugins.setObjectName(u"tabWidgetPlugins")
-        self.tabWidgetPlugins.setElideMode(Qt.ElideNone)
         self.tabWidgetPlugins.setDocumentMode(False)
         self.tabWidgetPlugins.setTabsClosable(False)
         self.tabWidgetPlugins.setMovable(True)
@@ -74,12 +85,21 @@ class Ui_MainWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.pushButtonClosePluginPage = QPushButton(self.plugins_list)
         self.pushButtonClosePluginPage.setObjectName(u"pushButtonClosePluginPage")
-        font = QFont()
-        font.setPointSize(18)
-        font.setBold(True)
-        self.pushButtonClosePluginPage.setFont(font)
+        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.pushButtonClosePluginPage.sizePolicy().hasHeightForWidth())
+        self.pushButtonClosePluginPage.setSizePolicy(sizePolicy)
+        self.pushButtonClosePluginPage.setMinimumSize(QSize(50, 40))
+        font1 = QFont()
+        font1.setPointSize(18)
+        font1.setBold(True)
+        self.pushButtonClosePluginPage.setFont(font1)
         self.pushButtonClosePluginPage.setStyleSheet(u"color: rgb(255, 255, 255);\n"
 "background-color: rgb(251, 55, 30);")
+        icon1 = QIcon()
+        icon1.addFile(u":/icons/icons/icons8-home-480.svg", QSize(), QIcon.Normal, QIcon.Off)
+        self.pushButtonClosePluginPage.setIcon(icon1)
         self.pushButtonClosePluginPage.setFlat(False)
 
         self.horizontalLayout_2.addWidget(self.pushButtonClosePluginPage)
@@ -90,16 +110,16 @@ class Ui_MainWindow(object):
 
         self.btnReloadPlugins = QPushButton(self.plugins_list)
         self.btnReloadPlugins.setObjectName(u"btnReloadPlugins")
-        sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.btnReloadPlugins.sizePolicy().hasHeightForWidth())
-        self.btnReloadPlugins.setSizePolicy(sizePolicy)
-        font1 = QFont()
-        font1.setFamilies([u"MS Shell Dlg 2"])
-        font1.setPointSize(18)
-        font1.setBold(True)
-        self.btnReloadPlugins.setFont(font1)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Maximum)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.btnReloadPlugins.sizePolicy().hasHeightForWidth())
+        self.btnReloadPlugins.setSizePolicy(sizePolicy1)
+        font2 = QFont()
+        font2.setFamilies([u"MS Shell Dlg 2"])
+        font2.setPointSize(18)
+        font2.setBold(True)
+        self.btnReloadPlugins.setFont(font2)
         self.btnReloadPlugins.setStyleSheet(u"")
         self.btnReloadPlugins.setFlat(False)
 
@@ -111,11 +131,11 @@ class Ui_MainWindow(object):
 
         self.labelPluginsPageTitle = QLabel(self.plugins_list)
         self.labelPluginsPageTitle.setObjectName(u"labelPluginsPageTitle")
-        font2 = QFont()
-        font2.setFamilies([u"Arial Black"])
-        font2.setPointSize(16)
-        font2.setBold(True)
-        self.labelPluginsPageTitle.setFont(font2)
+        font3 = QFont()
+        font3.setFamilies([u"Arial Black"])
+        font3.setPointSize(16)
+        font3.setBold(True)
+        self.labelPluginsPageTitle.setFont(font3)
 
         self.horizontalLayout_2.addWidget(self.labelPluginsPageTitle)
 
@@ -135,11 +155,11 @@ class Ui_MainWindow(object):
 
         self.scrollAreaPlugins = QScrollArea(self.plugins_list)
         self.scrollAreaPlugins.setObjectName(u"scrollAreaPlugins")
-        sizePolicy1 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.scrollAreaPlugins.sizePolicy().hasHeightForWidth())
-        self.scrollAreaPlugins.setSizePolicy(sizePolicy1)
+        sizePolicy2 = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.scrollAreaPlugins.sizePolicy().hasHeightForWidth())
+        self.scrollAreaPlugins.setSizePolicy(sizePolicy2)
         self.scrollAreaPlugins.setFrameShape(QFrame.Box)
         self.scrollAreaPlugins.setLineWidth(1)
         self.scrollAreaPlugins.setMidLineWidth(0)
@@ -147,7 +167,7 @@ class Ui_MainWindow(object):
         self.scrollAreaPlugins.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 854, 599))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 854, 595))
         self.scrollAreaPlugins.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_2.addWidget(self.scrollAreaPlugins)
@@ -161,10 +181,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.pushButtonCloseSettingsPage = QPushButton(self.settings)
         self.pushButtonCloseSettingsPage.setObjectName(u"pushButtonCloseSettingsPage")
-        self.pushButtonCloseSettingsPage.setFont(font1)
+        sizePolicy.setHeightForWidth(self.pushButtonCloseSettingsPage.sizePolicy().hasHeightForWidth())
+        self.pushButtonCloseSettingsPage.setSizePolicy(sizePolicy)
+        self.pushButtonCloseSettingsPage.setMinimumSize(QSize(50, 40))
+        self.pushButtonCloseSettingsPage.setFont(font2)
         self.pushButtonCloseSettingsPage.setToolTipDuration(-1)
         self.pushButtonCloseSettingsPage.setStyleSheet(u"color: rgb(255, 255, 255);\n"
 "background-color: rgb(251, 55, 30);")
+        self.pushButtonCloseSettingsPage.setIcon(icon1)
         self.pushButtonCloseSettingsPage.setFlat(False)
 
         self.horizontalLayout_3.addWidget(self.pushButtonCloseSettingsPage)
@@ -175,7 +199,7 @@ class Ui_MainWindow(object):
 
         self.labelSettingsPageTitle = QLabel(self.settings)
         self.labelSettingsPageTitle.setObjectName(u"labelSettingsPageTitle")
-        self.labelSettingsPageTitle.setFont(font2)
+        self.labelSettingsPageTitle.setFont(font3)
 
         self.horizontalLayout_3.addWidget(self.labelSettingsPageTitle)
 
@@ -206,11 +230,11 @@ class Ui_MainWindow(object):
 
         self.comboBoxLangList = QComboBox(self.frameLanguageBlock)
         self.comboBoxLangList.setObjectName(u"comboBoxLangList")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.comboBoxLangList.sizePolicy().hasHeightForWidth())
-        self.comboBoxLangList.setSizePolicy(sizePolicy2)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.comboBoxLangList.sizePolicy().hasHeightForWidth())
+        self.comboBoxLangList.setSizePolicy(sizePolicy3)
         self.comboBoxLangList.setCurrentText(u"")
 
         self.horizontalLayout.addWidget(self.comboBoxLangList)
@@ -224,11 +248,11 @@ class Ui_MainWindow(object):
 
         self.widget = QWidget(self.settings)
         self.widget.setObjectName(u"widget")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy3)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy4)
         self.widget_place = QVBoxLayout(self.widget)
         self.widget_place.setSpacing(0)
         self.widget_place.setObjectName(u"widget_place")
@@ -266,10 +290,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.pushButtonCloseLogs = QPushButton(self.logs)
         self.pushButtonCloseLogs.setObjectName(u"pushButtonCloseLogs")
-        self.pushButtonCloseLogs.setFont(font1)
+        sizePolicy.setHeightForWidth(self.pushButtonCloseLogs.sizePolicy().hasHeightForWidth())
+        self.pushButtonCloseLogs.setSizePolicy(sizePolicy)
+        self.pushButtonCloseLogs.setMinimumSize(QSize(50, 40))
+        self.pushButtonCloseLogs.setFont(font2)
         self.pushButtonCloseLogs.setToolTipDuration(-1)
         self.pushButtonCloseLogs.setStyleSheet(u"color: rgb(255, 255, 255);\n"
 "background-color: rgb(251, 55, 30);")
+        self.pushButtonCloseLogs.setIcon(icon1)
         self.pushButtonCloseLogs.setFlat(False)
 
         self.horizontalLayout_6.addWidget(self.pushButtonCloseLogs)
@@ -280,7 +308,7 @@ class Ui_MainWindow(object):
 
         self.labelLogsPageTitle = QLabel(self.logs)
         self.labelLogsPageTitle.setObjectName(u"labelLogsPageTitle")
-        self.labelLogsPageTitle.setFont(font2)
+        self.labelLogsPageTitle.setFont(font3)
 
         self.horizontalLayout_6.addWidget(self.labelLogsPageTitle)
 
@@ -294,6 +322,7 @@ class Ui_MainWindow(object):
         self.listViewLogs = QListView(self.logs)
         self.listViewLogs.setObjectName(u"listViewLogs")
         self.listViewLogs.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.listViewLogs.setProperty("isWrapping", True)
         self.listViewLogs.setWordWrap(True)
 
         self.verticalLayout_5.addWidget(self.listViewLogs)
@@ -310,9 +339,11 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 894, 22))
+        self.menubar.setGeometry(QRect(0, 0, 894, 26))
+        self.menubar.setFont(font)
         self.menu = QMenu(self.menubar)
         self.menu.setObjectName(u"menu")
+        self.menu.setFont(font)
         self.menu_2 = QMenu(self.menubar)
         self.menu_2.setObjectName(u"menu_2")
         MainWindow.setMenuBar(self.menubar)
@@ -332,7 +363,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(3)
         self.tabWidgetPlugins.setCurrentIndex(1)
 
 
@@ -364,7 +395,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.pushButtonClosePluginPage.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButtonClosePluginPage.setText(QCoreApplication.translate("MainWindow", u"\u00ab", None))
+        self.pushButtonClosePluginPage.setText("")
 #if QT_CONFIG(tooltip)
         self.btnReloadPlugins.setToolTip(QCoreApplication.translate("MainWindow", u"Reload all plugins from plugins directory", None))
 #endif // QT_CONFIG(tooltip)
@@ -373,21 +404,21 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.pushButtonCloseSettingsPage.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButtonCloseSettingsPage.setText(QCoreApplication.translate("MainWindow", u"\u00ab", None))
+        self.pushButtonCloseSettingsPage.setText("")
         self.labelSettingsPageTitle.setText(QCoreApplication.translate("MainWindow", u"Application Settings", None))
         self.label_language.setText(QCoreApplication.translate("MainWindow", u"Language", None))
 #if QT_CONFIG(tooltip)
-        self.pushButtonDeleteInvalidData.setToolTip(QCoreApplication.translate("MainWindow", u"Check the database for outdated plug-in data", None))
+        self.pushButtonDeleteInvalidData.setToolTip(QCoreApplication.translate("MainWindow", u"Check the database for outdated plugin data", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButtonDeleteInvalidData.setText(QCoreApplication.translate("MainWindow", u"Delete Invalid Data", None))
 #if QT_CONFIG(tooltip)
-        self.pushButtonAplySettings.setToolTip(QCoreApplication.translate("MainWindow", u"Apply and save current settings", None))
+        self.pushButtonAplySettings.setToolTip(QCoreApplication.translate("MainWindow", u"Apply and save current application settings", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButtonAplySettings.setText(QCoreApplication.translate("MainWindow", u"Apply Settings", None))
 #if QT_CONFIG(tooltip)
         self.pushButtonCloseLogs.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButtonCloseLogs.setText(QCoreApplication.translate("MainWindow", u"\u00ab", None))
+        self.pushButtonCloseLogs.setText("")
         self.labelLogsPageTitle.setText(QCoreApplication.translate("MainWindow", u"Logs", None))
         self.pushButtonClearLogs.setText(QCoreApplication.translate("MainWindow", u"Clear logs", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"App", None))

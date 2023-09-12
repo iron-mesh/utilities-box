@@ -16,6 +16,7 @@ from PySide6.QtWidgets import QMainWindow, QTabWidget, QScrollArea, QWidget, QDi
 from PySide6.QtCore import Qt, Slot
 from collections import OrderedDict
 from typing import Iterator
+from ..app_utils import *
 
 
 class PluginManager(QObject):
@@ -29,7 +30,7 @@ class PluginManager(QObject):
             self.plugins_loaded = True
             self._plugins = OrderedDict()
 
-        packagedir_list = [("", os.path.abspath(r"Plugins"))]
+        packagedir_list = [("", get_plugin_dir())]
         packagedir_list.extend(self._app_settings.get_property_value("external_plugin_dir"))
 
         for nickname, path in packagedir_list:
@@ -54,10 +55,11 @@ class PluginManager(QObject):
         cur_package_site = ""
         self._twidget.currentChanged.disconnect(self._on_tab_changed)
 
-        with shelve.open(PLUGINS_DATA_PATH) as data:
+        with shelve.open(get_plugin_data_dir()) as data:
             for key in key_list:
                 cur_plugin = self._plugins[key]
                 cur_plugin.plugin_db_key = key
+                cur_plugin.is_valid = True
                 utils.ubwidgets_list.clear()
 
                 if not clear_load:
@@ -74,19 +76,15 @@ class PluginManager(QObject):
                 try:
                     if not cur_plugin.module:
                         cur_plugin.module = importlib.import_module(cur_plugin.plugin_dir_name)
-                        self._add_log_message(
-                            lc.LOG_PACKAGE_HASBEEN_LOADED_SUCCESS.format(name=cur_plugin.module),
-                            "green")
+                        self._add_log_message(lc.LOG_PACKAGE_HASBEEN_LOADED_SUCCESS.format(name=cur_plugin.module),None,"green")
                     else:
                         cur_plugin.module = importlib.reload(cur_plugin.module)
-                        self._add_log_message(
-                            lc.LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS.format(name=cur_plugin.module),
-                            "green")
-                except Exception:
+                        self._add_log_message(lc.LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS.format(name=cur_plugin.module),None,"green")
+                except Exception as exc:
                     package_dir = cur_plugin.plugin_dirsite
                     package_name = cur_plugin.plugin_dir_name
                     package_path = package_dir + os.sep + package_name
-                    self._add_log_message(lc.LOG_PACKAGE_IMPORT_FAIL.format(path=package_path), "red")
+                    self._add_log_message(lc.LOG_PACKAGE_IMPORT_FAIL.format(path=package_path), traceback.format_exc(), "red")
                     if not cur_plugin.module:
                         del self._plugins[key]
                     continue
@@ -94,6 +92,7 @@ class PluginManager(QObject):
                 if len(utils.ubwidgets_list) == 1 and issubclass(utils.ubwidgets_list[0], UBWidget):
                     cur_plugin.ubwidget_class = utils.ubwidgets_list[0]
                 else:
+                    cur_plugin.is_valid = False
                     continue
 
                 try:
@@ -115,8 +114,9 @@ class PluginManager(QObject):
                             pl_params.settings_prop_values = cur_plugin.ubwidget_class.ub_settings.propvalues_to_dict()
                             pl_params.settings_params_dict = cur_plugin.ubwidget_class.ub_settings.prop_params_to_dict()
                         data[key] = pl_params
-                except Exception:
-                    self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=cur_plugin.module),"red")
+                except Exception as exc:
+                    self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=cur_plugin.module),traceback.format_exc(),"red")
+                    cur_plugin.is_valid = False
                     continue
 
                 if hasattr(cur_plugin.ubwidget_class, "ub_name") and type(cur_plugin.ubwidget_class.ub_name) is str:
@@ -165,6 +165,7 @@ class PluginManager(QObject):
         row_counter: int = 0
         plugins = self._plugins
         for i, key in enumerate(plugins.keys()):
+            if not plugins[key].is_valid: continue
             row_counter = i
             label = QLabel()
             label.setText(plugins[key].plugin_short_name)
@@ -201,7 +202,7 @@ class PluginManager(QObject):
 
     def _save_plugin_settings(self, plugin: PluginListItem):
         '''Save settings of plugin on HDD'''
-        with shelve.open(PLUGINS_DATA_PATH) as data:
+        with shelve.open(get_plugin_data_dir()) as data:
             key = plugin.plugin_db_key
             if hasattr(plugin.ubwidget_class, "ub_settings"):
                 logging.debug(f"Saving settings for plugin: {plugin.plugin_name}")
@@ -222,8 +223,8 @@ class PluginManager(QObject):
 
         def show_info():
             nonlocal plugin
-            dialog = DialogPluginInfo(self._parent)
-            dialog.set_text(plugin.ubwidget_class.ub_description)
+            dialog = DialogPluginInfo(plugin, self._parent)
+            # dialog.set_text(plugin.ubwidget_class.ub_description)
             dialog.exec()
 
         def reset_settings():
@@ -234,7 +235,7 @@ class PluginManager(QObject):
 
 
         show_description_action = menu.addAction(lc.INFO)
-        if hasattr(plugin.module, "ub_info"):
+        if hasattr(plugin.module, "ub_info") and type(plugin.module.ub_info) is dict:
             show_description_action.triggered.connect(show_info)
         else:
             show_description_action.setEnabled(False)
@@ -263,7 +264,12 @@ class PluginManager(QObject):
                 self._save_plugin_settings(plugin)
                 for j in range(self._twidget.count()):
                     if type(self._twidget.widget(j)) is plugin.ubwidget_class:
-                        self._twidget.widget(j).settings_changed()
+                        try:
+                            self._twidget.widget(j).settings_changed()
+                        except Exception as exc:
+                            key = self._twidget.widget(j).load_key
+                            plugin_name = self._plugins[key].plugin_name
+                            self._add_log_message(lc.LOG_SETTING_CHANGED_CALL_ERROR.format(plugin=plugin_name), traceback.format_exc(), "red")
                         break
 
     @Slot(bool)
@@ -274,7 +280,7 @@ class PluginManager(QObject):
 
     def update_plugins(self, update_tabs=False):
         """Save extra settings of plugins on HDD and refresh tabs"""
-        with shelve.open(PLUGINS_DATA_PATH) as data:
+        with shelve.open(get_plugin_data_dir()) as data:
             for i, plugin in self._plugins.items():
                 key = plugin.plugin_db_key
                 temp_data = data[key]
@@ -339,9 +345,16 @@ class PluginManager(QObject):
         self._log_listview.setModel(self._log_model)
 
 
-    def _add_log_message(self, msg:str, color:str = "none")->None:
+    def _add_log_message(self, msg:str, trace:str="", color:str = "none")->None:
         strtime = time.strftime("%H:%M:%S", time.localtime())
-        item = QStandardItem(f"{strtime}\t{msg}")
+        is_show_error_info = self._app_settings.get_property_value("show_error_msg")
+
+        if trace and is_show_error_info:
+            text = f"{strtime}⮞ {msg}\n\n{trace}"
+        else:
+            text = f"{strtime}⮞ {msg}"
+
+        item = QStandardItem(text)
         match color:
             case "red": item.setBackground(QColor(255, 140, 140))
             case "yellow": item.setBackground(QColor(250, 237, 105))

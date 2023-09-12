@@ -5,8 +5,6 @@ from PySide6.QtCore import Signal, Slot, QCoreApplication, Qt, QSize
 from . import PathInputMode, PathInput
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
-
 
 
 class NamedFilePathListInput(QWidget):

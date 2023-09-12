@@ -2,8 +2,6 @@ from PySide6.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QPushButton, QFil
 from PySide6.QtCore import Signal
 import logging, enum
 
-logging.basicConfig(level=logging.DEBUG)
-
 
 @enum.unique
 class PathInputMode(enum.IntEnum):

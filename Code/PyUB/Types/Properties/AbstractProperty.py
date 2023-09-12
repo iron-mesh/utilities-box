@@ -35,7 +35,7 @@ class AbstractProperty(metaclass=ABCMeta):
     @abstractmethod
     def extract_widget_data(self) -> bool:
         """Extracts data from widget
-               Returns True if value was changed, False - otherwise"""
+               Returns True if value has been changed, False - otherwise"""
         pass
 
     @abstractmethod

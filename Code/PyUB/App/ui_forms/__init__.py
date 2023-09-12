@@ -1,3 +1,1 @@
 
-from .ui_DialogWindowEditProperties import Ui_Dialog
-from .ui_UtilitiesBoxMainWindow import Ui_MainWindow

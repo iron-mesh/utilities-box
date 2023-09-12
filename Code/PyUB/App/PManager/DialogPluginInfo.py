@@ -1,47 +1,53 @@
-import sys, os, logging, math, traceback
+import webbrowser
 
 import PySide6.QtWidgets
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QPlainTextEdit, QDialogButtonBox
-from PySide6.QtCore import Qt
-from ..ui_forms import Ui_Dialog
+from PySide6.QtWidgets import QDialog, QPushButton
+from PySide6.QtCore import Qt, Slot
+from ..ui_forms.ui_DialogPluginInfo import Ui_Dialog
 from .FailWidget import FailWidget
 
 from .. parameters import *
 from .. import lang_constants as lc
 from .PMtypes import PluginListItem
 
-logging.basicConfig(level=logging.DEBUG)
-if(LOGGING_DISABLED):
-    logging.disable(logging.CRITICAL)
 
 
 class DialogPluginInfo(QDialog):
-    """ Dialog window for values editing in PropertyContainer"""
+    """ Dialog for output plugin information located in <ub_info>"""
 
-    def __init__(self, parent):
-        super().__init__()
-        layout = QVBoxLayout(self)
+    def __init__(self, plugin:PluginListItem, parent=None):
+        super().__init__(parent)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self._fill_form(plugin)
 
-        self.plain_text_edit =QPlainTextEdit()
-        self.plain_text_edit.setReadOnly(True)
-        layout.addWidget(self.plain_text_edit)
+    def _fill_form(self, plugin:PluginListItem):
+        info = plugin.module.ub_info
+        self.ui.name_label.setText(plugin.plugin_name)
 
-        buttonBox = QDialogButtonBox()
-        buttonBox.setCenterButtons(True)
-        buttonBox.setOrientation(Qt.Horizontal)
-        buttonBox.setStandardButtons(QDialogButtonBox.Ok)
-        buttonBox.accepted.connect(self.accept)
-        layout.addWidget(buttonBox)
-
-        screen = PySide6.QtWidgets.QApplication.primaryScreen()
-        width = screen.availableSize().width() if screen.availableSize().width() < 800 else 800
-        height = math.trunc(screen.availableSize().height() * .8)
-        self.resize(width, height)
-
-    def set_text(self, text:str):
-        self.plain_text_edit.setPlainText(text)
+        labels = {"description": self.ui.description_label,
+                  "author": self.ui.author_name_label,
+                  "author_webpage": self.ui.author_url_btn,
+                  "author_email": self.ui.author_email_btn,
+                  "version": self.ui.version_label,
+                  "wiki_url": self.ui.wiki_url_btn}
 
 
+        for key in labels:
+            if (key in info) and type(info[key]) is str:
+                labels[key].setText(info[key])
+            else:
+                labels[key].setText(f"({lc.UNDEFINED})")
+                if isinstance(labels[key], QPushButton):
+                    labels[key].setEnabled(False)
 
+        self.ui.author_url_btn.clicked.connect(lambda:self._open_url(self.ui.author_url_btn.text()))
+        self.ui.author_email_btn.clicked.connect(lambda:self._open_url(self.ui.author_email_btn.text(), "email"))
+        self.ui.wiki_url_btn.clicked.connect(lambda:self._open_url(self.ui.wiki_url_btn.text()))
 
-
+    @Slot()
+    def _open_url(self, url:str, mode:str = "site"):
+        if mode == "site":
+            webbrowser.open_new_tab(url)
+        elif mode == "email":
+            webbrowser.open(f"mailto:{url}")

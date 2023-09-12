@@ -6,14 +6,15 @@ from collections import namedtuple
 class PluginListItem:
     """Save plugin parameters in runtime"""
     module = None
+    is_valid:bool = True
     plugin_name: str = ""
-    plugin_short_name:str = ""
+    plugin_short_name: str = ""
     ubwidget_class = None
     is_enabled: bool = True
     init_on_startup: bool = False
-    plugin_dir: str = ""
+    plugin_dir_name: str = ""
     plugin_db_key: str = ""
-    plugin_absdirpath = ""
+    plugin_dirsite = ""
     plugin_translators: list[QTranslator] = dataclasses.field(default_factory=list)
 
 @dataclasses.dataclass

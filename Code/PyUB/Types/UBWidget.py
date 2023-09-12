@@ -4,7 +4,6 @@ from PySide6.QtWidgets import QWidget
 class UBWidget(QWidget):
     #ub_name = "type plugin name"
     #ub_settings = <link PropertyContainer class>
-    #ub_description = "Plugin description"
 
     def __init__(self) -> None:
         super().__init__()

@@ -4,18 +4,14 @@ from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QFont
 
 from .UBoxSettings import UBoxSettings
-from .ui_forms import Ui_MainWindow
+from .ui_forms.ui_UtilitiesBoxMainWindow import Ui_MainWindow
 from .app_types import  AppDataKeys
 import os, sys, shelve, pickle
-from .parameters import *
 from . import lang_constants as lc
+from .app_utils import *
 from .PManager import PluginManager
-
+from PyUB.App.UBoxAboutDialog import UBoxAboutDialog
 import logging, importlib, traceback
-
-logging.basicConfig(level=logging.DEBUG)
-if LOGGING_DISABLED:
-    logging.disable(level=logging.CRITICAL)
 
 class UBoxMainWindow(QMainWindow):
 
@@ -43,23 +39,30 @@ class UBoxMainWindow(QMainWindow):
         self.ui.menu_plugins.triggered.connect(lambda:self.change_page(1))
         self.ui.menu_logs.triggered.connect(lambda:self.change_page(3))
         self.ui.menu_exit.triggered.connect(self.close)
+        self.ui.menu_about.triggered.connect(self._on_menu_about)
         self.ui.btnReloadPlugins.clicked.connect(self._on_reload_plugins)
         self.ui.pushButtonClosePluginPage.clicked.connect(self._back_to_mainpage)
         self.ui.pushButtonCloseSettingsPage.clicked.connect(self._back_to_mainpage)
         self.ui.pushButtonCloseLogs.clicked.connect(self._back_to_mainpage)
         self.ui.stackedWidget.currentChanged.connect(self._on_stacked_widget_current_changed)
         self.ui.pushButtonAplySettings.clicked.connect(self._save_app_settings)
+        self.ui.pushButtonClearLogs.clicked.connect(self._clear_logs)
 
     def _init_gui_elements(self):
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.tabWidgetPlugins.clear()
         self.ui.widget_place.addWidget(self._settings.render_layout())
+        self.ui.frameLanguageBlock.setVisible(False)
 
     def change_page(self, index:int) -> None:
         self.ui.stackedWidget.setCurrentIndex(index)
 
     def _on_menu_about(self):
-        pass
+        dialog =UBoxAboutDialog(self)
+        converted_to_str = [str(i) for i in parameters.VERSION]
+        modified_version = ".".join(converted_to_str)
+        dialog.set_version(modified_version)
+        dialog.exec()
 
     def _on_menu_help(self):
         pass
@@ -72,8 +75,9 @@ class UBoxMainWindow(QMainWindow):
         self.plugin_manager.init_plugins()
 
     def _on_reload_plugins(self):
-        self.plugin_manager.update_plugins(update_tabs=False)
-        self.plugin_manager.load_plugins()
+        answer = QMessageBox.question(self, lc.DIALOG_RELOAD_PLUGINS, lc.QUESTION_RELOAD_PLUGINS)
+        if answer:
+            self.plugin_manager.reload_plugins()
 
     @Slot(int)
     def _on_stacked_widget_current_changed(self, index: int):
@@ -85,7 +89,7 @@ class UBoxMainWindow(QMainWindow):
         self.st_widget_page = self.ui.stackedWidget.currentIndex()
 
     def _load_app_settings(self):
-        with shelve.open(APP_DATA_PATH) as data:
+        with shelve.open(get_app_data_dir()) as data:
             key = AppDataKeys.SettingsDict
             if key in data:
                 self._settings.set_propvalues_from_dict(data[key])
@@ -96,7 +100,7 @@ class UBoxMainWindow(QMainWindow):
     @Slot()
     def _save_app_settings(self) -> None:
         if self._settings.update_data():
-            with shelve.open(APP_DATA_PATH) as data:
+            with shelve.open(get_app_data_dir()) as data:
                 data[AppDataKeys.SettingsDict] = self._settings.propvalues_to_dict()
             self._apply_settings()
         QMessageBox.information(self, lc.DIALOG_TITLE_WARNING, lc.DIALOG_APPLY_AFTER_RESTART)
@@ -107,3 +111,7 @@ class UBoxMainWindow(QMainWindow):
         font_family = self._settings.get_property("font_family").get_current_font().family()
         app.setFont(QFont(font_family, font_size, QFont.Normal))
         app.setStyle(self._settings.get_property("style").get_current_item_text())
+
+    @Slot()
+    def _clear_logs(self):
+        self.ui.listViewLogs.model().clear()

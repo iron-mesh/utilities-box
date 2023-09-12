@@ -3,13 +3,11 @@ from PySide6.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton
 from PySide6.QtCore import Signal, Slot, QCoreApplication
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
 
 
 
 class StringListInput(QWidget):
     """Widget for input of list of strings"""
-
 
     def __init__(self, parent = None):
         super().__init__(parent)

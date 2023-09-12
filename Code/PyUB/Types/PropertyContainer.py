@@ -6,8 +6,6 @@ import pickle
 
 
 class PropertyContainer:
-
-
     def __getattr__(self, item):
         if item in self.__annotations__:
             return self.get_property_value(item)

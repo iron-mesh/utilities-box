@@ -1,5 +1,6 @@
 
 from .Types import UBWidget
+from .App import parameters
 import inspect, shelve, sys
 from typing import Any
 
@@ -15,12 +16,17 @@ def register_ubwidget(widget: UBWidget) -> None:
         raise Exception(f"Class <{widget.__name__}> is already registered")
     ubwidgets_list.append(widget)
 
-
 def crop_string(s:str, length:int):
     if len(s) <= length:
         return s
     else:
         return(s[0:length-1] + u"…")
+
+def set_home_dir(path: str) -> None:
+    parameters.HOME_DIR = path
+
+
+
 
 
 

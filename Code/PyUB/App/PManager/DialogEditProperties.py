@@ -2,16 +2,12 @@ import sys, os, logging, math, traceback
 
 import PySide6.QtWidgets
 from PySide6.QtWidgets import QDialog
-from ..ui_forms import Ui_Dialog
+from ..ui_forms.ui_DialogWindowEditProperties import Ui_Dialog
 from .FailWidget import FailWidget
 
 from .. parameters import *
 from .. import lang_constants as lc
 from .PMtypes import PluginListItem
-
-logging.basicConfig(level=logging.DEBUG)
-if(LOGGING_DISABLED):
-    logging.disable(logging.CRITICAL)
 
 
 class DialogEditProperties(QDialog):

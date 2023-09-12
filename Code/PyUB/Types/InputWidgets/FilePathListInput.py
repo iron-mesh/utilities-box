@@ -5,7 +5,6 @@ from . import StringListInput
 from .PathInput import PathInputMode
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
 
 
 
