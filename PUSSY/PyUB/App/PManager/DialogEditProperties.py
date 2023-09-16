@@ -47,11 +47,3 @@ class DialogEditProperties(QDialog):
         self.setWindowTitle(lc.DIALOG_TITLE_CONFIG_PLUGIN.format(self._item.plugin_name))
         if not error_occured:
             self._item.ubwidget_class.ub_settings.retranslate()
-
-
-#
-
-
-
-
-

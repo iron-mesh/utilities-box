@@ -19,8 +19,8 @@ class UBoxAboutDialog(QDialog):
         self.ui.btn_developerwebsite.clicked.connect(self._on_link_btn)
         self.ui.btn_support_author.clicked.connect(self._on_link_btn)
 
-    def set_version(self, t:tuple):
-        self.ui.version_label.setText(self.ui.version_label.text() + str(t))
+    def set_version(self, s:str):
+        self.ui.version_label_edit.setText(s)
 
     @Slot()
     def _on_link_btn(self):

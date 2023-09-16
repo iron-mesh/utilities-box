@@ -71,6 +71,8 @@ class NamedFilePathListInput(QWidget):
         for i in lst:
             item = QListWidgetItem(i[0])
             item.setData(Qt.ItemDataRole.UserRole, i[1])
+            item_flags = Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable
+            item.setFlags(item_flags)
             self._listWidget.addItem(item)
 
     def setToolTip(self, arg__1: str) -> None:

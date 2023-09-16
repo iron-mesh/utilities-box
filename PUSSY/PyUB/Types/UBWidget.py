@@ -9,7 +9,7 @@ class UBWidget(QWidget):
         super().__init__()
 
     def retranslate(self) -> None:
-        """ The app calls this method when a user changes plugin's language"""
+        """ The app calls this method if a user has changed plugin's language"""
         pass
 
     def app_closing(self) -> None:

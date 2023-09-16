@@ -10,7 +10,7 @@ class UBoxSettings(PropertyContainer):
     style: ComboBoxProperty(items=["MacOS", "Fusion", "Windows", "WindowsVista"], default_value=0, name="Theme")
     font_size: IntProperty(name="Font Size", default_value=10, minimum=8, maximum=48)
     font_family:FontSelectProperty(name="Font")
-    show_error_msg:BoolProperty(False, "Show error info in logs")
+    show_error_msg:BoolProperty(False, "Display error info in Logs")
     external_plugin_dir:NamedFilePathListProperty(name="External Plugin Directories", mode=PathInputMode.Directory)
 
     @classmethod

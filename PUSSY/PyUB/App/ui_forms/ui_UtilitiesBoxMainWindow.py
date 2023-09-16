@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UtilitiesBoxMainWindowcVObTV.ui'
+## Form generated from reading UI file 'UtilitiesBoxMainWindowOjlTpq.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -29,7 +29,7 @@ class Ui_MainWindow(object):
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.resize(894, 739)
         icon = QIcon()
-        icon.addFile(u":/imgs/imgs/PyUB_Logo.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/imgs/imgs/PUSSY_Logo_min.svg", QSize(), QIcon.Normal, QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.menu_settings = QAction(MainWindow)
         self.menu_settings.setObjectName(u"menu_settings")
@@ -167,7 +167,7 @@ class Ui_MainWindow(object):
         self.scrollAreaPlugins.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 854, 595))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 96, 26))
         self.scrollAreaPlugins.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_2.addWidget(self.scrollAreaPlugins)
@@ -321,8 +321,12 @@ class Ui_MainWindow(object):
 
         self.listViewLogs = QListView(self.logs)
         self.listViewLogs.setObjectName(u"listViewLogs")
+        self.listViewLogs.setSizeAdjustPolicy(QAbstractScrollArea.AdjustIgnored)
         self.listViewLogs.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.listViewLogs.setProperty("isWrapping", True)
+        self.listViewLogs.setTextElideMode(Qt.ElideNone)
+        self.listViewLogs.setProperty("isWrapping", False)
+        self.listViewLogs.setResizeMode(QListView.Adjust)
+        self.listViewLogs.setUniformItemSizes(True)
         self.listViewLogs.setWordWrap(True)
 
         self.verticalLayout_5.addWidget(self.listViewLogs)
@@ -371,7 +375,7 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"PUSSY", None))
         self.menu_settings.setText(QCoreApplication.translate("MainWindow", u"Settings", None))
 #if QT_CONFIG(shortcut)
         self.menu_settings.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Alt+S", None))

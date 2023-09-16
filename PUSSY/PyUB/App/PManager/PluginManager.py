@@ -1,11 +1,11 @@
 
-from ..UBoxSettings import UBoxSettings
+from .. import UBoxSettings
 from .FailWidget import FailWidget
-from .PMtypes import PluginListItem, PluginParameters, PackageDirItem
+from .PMtypes import PluginListItem, PluginParameters, Commands
 from ... import utils
 from ...Types.InputWidgets import CheckableButton
 from ...Types import UBWidget
-import os, sys, shelve, pickle, importlib, traceback, logging, time
+import os, sys, shelve, pickle, importlib, traceback, logging, time, re
 from ..parameters import *
 from .. import lang_constants as lc
 from .DialogEditProperties import DialogEditProperties
@@ -17,6 +17,7 @@ from PySide6.QtCore import Qt, Slot
 from collections import OrderedDict
 from typing import Iterator
 from ..app_utils import *
+from typing import Any
 
 
 class PluginManager(QObject):
@@ -30,17 +31,18 @@ class PluginManager(QObject):
             self.plugins_loaded = True
             self._plugins = OrderedDict()
 
-        packagedir_list = [("", get_plugin_dir())]
-        packagedir_list.extend(self._app_settings.get_property_value("external_plugin_dir"))
+        packagedir_list = [("", get_plugin_dir())] + self._app_settings.get_property_value("external_plugin_dir")
 
         for nickname, path in packagedir_list:
-            for dir in os.listdir(path):
-                package_key = str((nickname, dir))
-                if (dir.lower() in FOLDER_NAMES_IGNORE_LIST) or package_key in self._plugins:
+            if not os.path.exists(path): continue
+            for entity in os.listdir(path):
+                if not is_valid_package(path + os.sep + entity): continue
+                package_key = str((path, entity))
+                if (entity.lower() in FOLDER_NAMES_IGNORE_LIST) or package_key in self._plugins:
                     continue
                 self._plugins[package_key] = PluginListItem()
                 self._plugins[package_key].plugin_dirsite = path
-                self._plugins[package_key].plugin_dir_name = dir
+                self._plugins[package_key].plugin_dir_name = entity
 
         self._load_plugins(list(self._plugins.keys()), clear_load=True)
         self._controlarea.setWidget(self._render_plugins_control_widget())
@@ -80,7 +82,7 @@ class PluginManager(QObject):
                     else:
                         cur_plugin.module = importlib.reload(cur_plugin.module)
                         self._add_log_message(lc.LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS.format(name=cur_plugin.module),None,"green")
-                except Exception as exc:
+                except:
                     package_dir = cur_plugin.plugin_dirsite
                     package_name = cur_plugin.plugin_dir_name
                     package_path = package_dir + os.sep + package_name
@@ -114,7 +116,7 @@ class PluginManager(QObject):
                             pl_params.settings_prop_values = cur_plugin.ubwidget_class.ub_settings.propvalues_to_dict()
                             pl_params.settings_params_dict = cur_plugin.ubwidget_class.ub_settings.prop_params_to_dict()
                         data[key] = pl_params
-                except Exception as exc:
+                except:
                     self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=cur_plugin.module),traceback.format_exc(),"red")
                     cur_plugin.is_valid = False
                     continue
@@ -129,7 +131,7 @@ class PluginManager(QObject):
                     if cur_plugin.init_on_startup:
                         try:
                             widget = cur_plugin.ubwidget_class()
-                        except Exception as exc:
+                        except:
                             widget = FailWidget()
                             widget.set_error_msg(
                                 lc.ERROR_WIDGET_INIT.format(wgt_class=cur_plugin.ubwidget_class,
@@ -200,14 +202,18 @@ class PluginManager(QObject):
         layout.addItem(h_spacer, 0, 1)
         return widget
 
-    def _save_plugin_settings(self, plugin: PluginListItem):
+    def _save_plugin_settings(self, plugin: PluginListItem, save_values=True, save_parameters=False):
         '''Save settings of plugin on HDD'''
         with shelve.open(get_plugin_data_dir()) as data:
             key = plugin.plugin_db_key
             if hasattr(plugin.ubwidget_class, "ub_settings"):
-                logging.debug(f"Saving settings for plugin: {plugin.plugin_name}")
+                logging.debug(f"Class: {plugin.ubwidget_class}")
+                logging.debug(f"Saving settings for plugin: {plugin.plugin_name}; save_values:{save_values}; save_parameters:{save_parameters}")
                 temp = data[key]
-                temp.settings_prop_values = plugin.ubwidget_class.ub_settings.propvalues_to_dict()
+                if save_values:
+                    temp.settings_prop_values = plugin.ubwidget_class.ub_settings.propvalues_to_dict()
+                if save_parameters:
+                    temp.settings_params_dict = plugin.ubwidget_class.ub_settings.prop_params_to_dict()
                 data[key] = temp
 
     @Slot()
@@ -224,13 +230,13 @@ class PluginManager(QObject):
         def show_info():
             nonlocal plugin
             dialog = DialogPluginInfo(plugin, self._parent)
-            # dialog.set_text(plugin.ubwidget_class.ub_description)
             dialog.exec()
 
         def reset_settings():
             nonlocal plugin
-            answer = QMessageBox.question(self._parent, lc.RESET_SETTINGS, lc.QUESTION_RESET_SETTINGS)
-            if answer:
+            buttons = QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            answer = QMessageBox.question(self._parent, lc.RESET_SETTINGS, lc.QUESTION_RESET_SETTINGS, buttons)
+            if answer == QMessageBox.StandardButton.Yes:
                 self._reload_plugin(plugin)
 
 
@@ -261,12 +267,16 @@ class PluginManager(QObject):
         res = dialog.exec_()
         if res == QDialog.Accepted and not dialog.is_error_occured():
             if (plugin.ubwidget_class.ub_settings.update_data()):
-                self._save_plugin_settings(plugin)
+                try:
+                    self._save_plugin_settings(plugin)
+                except:
+                    self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=plugin.module), traceback.format_exc(), "red")
+
                 for j in range(self._twidget.count()):
                     if type(self._twidget.widget(j)) is plugin.ubwidget_class:
                         try:
                             self._twidget.widget(j).settings_changed()
-                        except Exception as exc:
+                        except:
                             key = self._twidget.widget(j).load_key
                             plugin_name = self._plugins[key].plugin_name
                             self._add_log_message(lc.LOG_SETTING_CHANGED_CALL_ERROR.format(plugin=plugin_name), traceback.format_exc(), "red")
@@ -321,7 +331,7 @@ class PluginManager(QObject):
             self._twidget.currentChanged.disconnect(self._on_tab_changed)
             try:
                 new_widget = self._plugins[key].ubwidget_class()
-            except Exception as exc:
+            except:
                 # pass
                 new_widget = FailWidget()
                 new_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=self._plugins[key].ubwidget_class, traceback_info=traceback.format_exc()))
@@ -344,6 +354,16 @@ class PluginManager(QObject):
         self._log_listview = list_view
         self._log_listview.setModel(self._log_model)
 
+    def exec_app_closing(self):
+        """Execute method: app_closing() for all initialized plugins"""
+        widget_tab = self._twidget
+        for i in range(widget_tab.count()):
+            if isinstance(widget:=widget_tab.widget(i), UBWidget):
+                try:
+                    widget.app_closing()
+                except:
+                    err_message = lc.DIALOG_MSG_APP_CLOSING_ERROR.format(cls=type(widget), trace=traceback.format_exc())
+                    QMessageBox.warning(self._parent, lc.DIALOG_TITLE_WARNING,err_message)
 
     def _add_log_message(self, msg:str, trace:str="", color:str = "none")->None:
         strtime = time.strftime("%H:%M:%S", time.localtime())
@@ -361,3 +381,45 @@ class PluginManager(QObject):
             case "green": item.setBackground(QColor(142, 255, 140))
         item.setFont(QApplication.font())
         self._log_model.insertRow(0, item)
+
+    def exec_command(self, ub_widget_cls, command, **parameters)->Any:
+        for key in self._plugins.keys():
+            if self._plugins[key].ubwidget_class is ub_widget_cls:
+                plugin = self._plugins[key]
+                break
+
+        if command == Commands.SaveSettingsParameters:
+            self._save_plugin_settings(plugin, False, True)
+
+        elif command == Commands.GetLocalStorage:
+            flag = parameters["f"]
+            protocol = parameters["p"]
+            writeback = parameters["w"]
+
+            dir_path = os.sep.join([plugin.plugin_dirsite, plugin.plugin_dir_name, "localdata"])
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
+            path = dir_path + os.sep + "data"
+            return shelve.open(path, flag, protocol, writeback)
+
+        elif command == Commands.GetPluginDir:
+            return plugin.plugin_dirsite + os.sep + plugin.plugin_dir_name
+
+
+    def delete_invalid_data(self):
+        with shelve.open(get_plugin_data_dir()) as data:
+            plugins_keys = set(self._plugins.keys())
+            db_keys = set(data.keys())
+            invalid_keys = db_keys - plugins_keys
+            if len(invalid_keys) > 0:
+                buttons = QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                answer = QMessageBox.question(self._parent, lc.DIALOG_TITLE_DEL_INVALID_DATA, lc.QUESTION_DEL_INVALID_DATA.format(count=len(invalid_keys)), buttons)
+                if answer == QMessageBox.StandardButton.Yes:
+                    for i in invalid_keys:
+                        del data[i]
+            else:
+                buttons = QMessageBox.StandardButton.Close
+                QMessageBox.information(self._parent, lc.DIALOG_TITLE_NOTIFICATION, lc.DIALOG_INVALID_DATA_NOTFOUND, buttons)
+
+
+

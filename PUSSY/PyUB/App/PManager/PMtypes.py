@@ -1,4 +1,4 @@
-import dataclasses
+import dataclasses, enum
 from PySide6.QtCore import QTranslator
 from collections import namedtuple
 
@@ -7,10 +7,10 @@ class PluginListItem:
     """Save plugin parameters in runtime"""
     module = None
     is_valid:bool = True
+    is_enabled: bool = True
     plugin_name: str = ""
     plugin_short_name: str = ""
     ubwidget_class = None
-    is_enabled: bool = True
     init_on_startup: bool = False
     plugin_dir_name: str = ""
     plugin_db_key: str = ""
@@ -25,10 +25,18 @@ class PluginParameters:
     init_on_startup: bool = False
     settings_prop_values: dict = dataclasses.field(default_factory=dict)
     settings_params_dict: dict = dataclasses.field(default_factory=dict)
+
 @dataclasses.dataclass
 class PackageDirItem:
     """Describe item of folder with packages"""
     dir_nickname:str = ""
     dir_abspath:str = ""
     package_list:list[str] = dataclasses.field(default_factory=list)
+
+
+@enum.unique
+class Commands(enum.IntEnum):
+    GetPluginDir = 0
+    GetLocalStorage = 1
+    SaveSettingsParameters = 2
 

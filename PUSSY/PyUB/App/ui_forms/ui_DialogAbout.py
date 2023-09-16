@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'DialogAboutPylOmR.ui'
+## Form generated from reading UI file 'DialogAboutqeeaUr.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -24,9 +24,9 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(868, 703)
+        Dialog.resize(687, 598)
         icon = QIcon()
-        icon.addFile(u":/imgs/imgs/PyUB_Logo.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u":/imgs/imgs/PUSSY_Logo_min.svg", QSize(), QIcon.Normal, QIcon.Off)
         Dialog.setWindowIcon(icon)
         Dialog.setSizeGripEnabled(False)
         self.verticalLayout_4 = QVBoxLayout(Dialog)
@@ -54,7 +54,7 @@ class Ui_Dialog(object):
         self.label_app_logo = QLabel(Dialog)
         self.label_app_logo.setObjectName(u"label_app_logo")
         self.label_app_logo.setMaximumSize(QSize(200, 200))
-        self.label_app_logo.setPixmap(QPixmap(u":/imgs/imgs/PyUB_Logo.svg"))
+        self.label_app_logo.setPixmap(QPixmap(u":/imgs/imgs/PUSSY_Logo.svg"))
         self.label_app_logo.setScaledContents(True)
 
         self.horizontalLayout_5.addWidget(self.label_app_logo)
@@ -62,11 +62,38 @@ class Ui_Dialog(object):
 
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
 
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.horizontalLayout_6.setContentsMargins(5, 5, 5, 5)
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_5)
+
         self.version_label = QLabel(Dialog)
         self.version_label.setObjectName(u"version_label")
+        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.version_label.sizePolicy().hasHeightForWidth())
+        self.version_label.setSizePolicy(sizePolicy)
         self.version_label.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_2.addWidget(self.version_label)
+        self.horizontalLayout_6.addWidget(self.version_label)
+
+        self.version_label_edit = QLabel(Dialog)
+        self.version_label_edit.setObjectName(u"version_label_edit")
+        sizePolicy.setHeightForWidth(self.version_label_edit.sizePolicy().hasHeightForWidth())
+        self.version_label_edit.setSizePolicy(sizePolicy)
+        self.version_label_edit.setAlignment(Qt.AlignCenter)
+
+        self.horizontalLayout_6.addWidget(self.version_label_edit)
+
+        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_6)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_6)
 
         self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -88,7 +115,7 @@ class Ui_Dialog(object):
 
         self.verticalLayout_3 = QVBoxLayout()
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(20, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.verticalLayout_3.addItem(self.verticalSpacer_2)
 
@@ -132,13 +159,11 @@ class Ui_Dialog(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(5, 5, 5, 5)
         self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setSpacing(6)
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(10, 10, 10, 10)
+        self.horizontalLayout_2.setContentsMargins(6, 6, 6, 6)
         self.label_4 = QLabel(Dialog)
         self.label_4.setObjectName(u"label_4")
-        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_4.sizePolicy().hasHeightForWidth())
         self.label_4.setSizePolicy(sizePolicy)
         self.label_4.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
@@ -178,7 +203,7 @@ class Ui_Dialog(object):
 
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.horizontalLayout.setContentsMargins(10, 10, 10, 10)
+        self.horizontalLayout.setContentsMargins(6, 6, 6, 6)
         self.btn_developerwebsite = QPushButton(Dialog)
         self.btn_developerwebsite.setObjectName(u"btn_developerwebsite")
         self.btn_developerwebsite.setCursor(QCursor(Qt.PointingHandCursor))
@@ -241,11 +266,12 @@ class Ui_Dialog(object):
     # setupUi
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"About UPA", None))
+        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"About PUSSY", None))
         self.label_app_logo.setText("")
-        self.version_label.setText(QCoreApplication.translate("Dialog", u"Version:", None))
-        self.label_title.setText(QCoreApplication.translate("Dialog", u"APP NAME", None))
-        self.label_app_desc.setText(QCoreApplication.translate("Dialog", u"\"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?\"", None))
+        self.version_label.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><span style=\" font-weight:700;\">Version: </span></body></html>", None))
+        self.version_label_edit.setText("")
+        self.label_title.setText(QCoreApplication.translate("Dialog", u"PUSSY", None))
+        self.label_app_desc.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p>PUSSY(Python Universal Script System for You) - program complex for fast development and management mini-programs with GUI on Python3 and Pyside6.  </p></body></html>", None))
         self.label_4.setText(QCoreApplication.translate("Dialog", u"Powered by:", None))
         self.btn_developerwebsite.setText(QCoreApplication.translate("Dialog", u"Developer's website", None))
         self.btn_support_author.setText(QCoreApplication.translate("Dialog", u"Support the author", None))

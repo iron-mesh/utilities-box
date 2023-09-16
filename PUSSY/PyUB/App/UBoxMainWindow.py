@@ -4,6 +4,7 @@ from PySide6.QtCore import Qt, Slot, QCoreApplication
 from PySide6.QtGui import QFont
 
 from .UBoxSettings import UBoxSettings
+from ..Types import UBHelper
 from .ui_forms.ui_UtilitiesBoxMainWindow import Ui_MainWindow
 from .app_types import  AppDataKeys
 import os, sys, shelve, pickle
@@ -12,6 +13,7 @@ from .app_utils import *
 from .PManager import PluginManager
 from PyUB.App.UBoxAboutDialog import UBoxAboutDialog
 import logging, importlib, traceback
+
 
 class UBoxMainWindow(QMainWindow):
 
@@ -30,14 +32,14 @@ class UBoxMainWindow(QMainWindow):
         self.plugin_manager.set_controlarea(self.ui.scrollAreaPlugins)
         self.plugin_manager.set_log_view(self.ui.listViewLogs)
 
-        self._init_link_handlers()
+        self._link_handlers()
 
         self.st_widget_page = self.ui.stackedWidget.currentIndex()
 
-    def _init_link_handlers(self):
-        self.ui.menu_settings.triggered.connect(lambda:self.change_page(2))
-        self.ui.menu_plugins.triggered.connect(lambda:self.change_page(1))
-        self.ui.menu_logs.triggered.connect(lambda:self.change_page(3))
+    def _link_handlers(self):
+        self.ui.menu_settings.triggered.connect(lambda:self._change_page(2))
+        self.ui.menu_plugins.triggered.connect(lambda:self._change_page(1))
+        self.ui.menu_logs.triggered.connect(lambda:self._change_page(3))
         self.ui.menu_exit.triggered.connect(self.close)
         self.ui.menu_about.triggered.connect(self._on_menu_about)
         self.ui.btnReloadPlugins.clicked.connect(self._on_reload_plugins)
@@ -47,6 +49,7 @@ class UBoxMainWindow(QMainWindow):
         self.ui.stackedWidget.currentChanged.connect(self._on_stacked_widget_current_changed)
         self.ui.pushButtonAplySettings.clicked.connect(self._save_app_settings)
         self.ui.pushButtonClearLogs.clicked.connect(self._clear_logs)
+        self.ui.pushButtonDeleteInvalidData.clicked.connect(self._on_delete_invalid_data)
 
     def _init_gui_elements(self):
         self.ui.stackedWidget.setCurrentIndex(0)
@@ -54,7 +57,8 @@ class UBoxMainWindow(QMainWindow):
         self.ui.widget_place.addWidget(self._settings.render_layout())
         self.ui.frameLanguageBlock.setVisible(False)
 
-    def change_page(self, index:int) -> None:
+
+    def _change_page(self, index:int) -> None:
         self.ui.stackedWidget.setCurrentIndex(index)
 
     def _on_menu_about(self):
@@ -73,10 +77,12 @@ class UBoxMainWindow(QMainWindow):
     def show(self) -> None:
         super().show()
         self.plugin_manager.init_plugins()
+        UBHelper.set_plugin_manager(self.plugin_manager)
 
     def _on_reload_plugins(self):
-        answer = QMessageBox.question(self, lc.DIALOG_RELOAD_PLUGINS, lc.QUESTION_RELOAD_PLUGINS)
-        if answer:
+        buttons = QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        answer = QMessageBox.question(self, lc.DIALOG_RELOAD_PLUGINS, lc.QUESTION_RELOAD_PLUGINS, buttons)
+        if answer == QMessageBox.StandardButton.Yes:
             self.plugin_manager.reload_plugins()
 
     @Slot(int)
@@ -87,6 +93,10 @@ class UBoxMainWindow(QMainWindow):
         elif self.st_widget_page == 2: #app settings
             pass
         self.st_widget_page = self.ui.stackedWidget.currentIndex()
+
+    @Slot()
+    def _on_delete_invalid_data(self):
+        self.plugin_manager.delete_invalid_data()
 
     def _load_app_settings(self):
         with shelve.open(get_app_data_dir()) as data:
@@ -115,3 +125,6 @@ class UBoxMainWindow(QMainWindow):
     @Slot()
     def _clear_logs(self):
         self.ui.listViewLogs.model().clear()
+
+    def closeEvent(self, event) -> None:
+        self.plugin_manager.exec_app_closing()
