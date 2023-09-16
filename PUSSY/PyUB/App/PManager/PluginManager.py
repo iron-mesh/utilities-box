@@ -36,7 +36,8 @@ class PluginManager(QObject):
         for nickname, path in packagedir_list:
             if not os.path.exists(path): continue
             for entity in os.listdir(path):
-                if not is_valid_package(path + os.sep + entity): continue
+                if not is_valid_package(path + os.sep + entity):
+                    continue
                 package_key = str((path, entity))
                 if (entity.lower() in FOLDER_NAMES_IGNORE_LIST) or package_key in self._plugins:
                     continue
@@ -80,7 +81,7 @@ class PluginManager(QObject):
                         cur_plugin.module = importlib.import_module(cur_plugin.plugin_dir_name)
                         self._add_log_message(lc.LOG_PACKAGE_HASBEEN_LOADED_SUCCESS.format(name=cur_plugin.module),None,"green")
                     else:
-                        cur_plugin.module = importlib.reload(cur_plugin.module)
+                        cur_plugin.module = rreload(cur_plugin.module)
                         self._add_log_message(lc.LOG_PACKAGE_HASBEEN_RELOADED_SUCCESS.format(name=cur_plugin.module),None,"green")
                 except:
                     package_dir = cur_plugin.plugin_dirsite

@@ -4,7 +4,7 @@ LOGGING_DISABLED = 1
 
 VERSION = (0, 0, 1, "a")
 
-FOLDER_NAMES_IGNORE_LIST = {"Template2"}
+FOLDER_NAMES_IGNORE_LIST = {"template"}
 
 HOME_DIR = ""
 PLUGINS_DATA_PATH = r"data/plugins/plugins_data"

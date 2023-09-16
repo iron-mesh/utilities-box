@@ -17,11 +17,11 @@ class FloatProperty(Property):
 
     def get_input_widget(self) -> QDoubleSpinBox:
         self._widget_ref = QDoubleSpinBox()
-        self._widget_ref.setValue(self._value)
         self._widget_ref.setMinimum(self.p_minimum)
         self._widget_ref.setMaximum(self.p_maximum)
         self._widget_ref.setSingleStep(self.p_single_step)
         self._widget_ref.setDecimals(self.p_decimals)
+        self._widget_ref.setValue(self._value)
         self.retranslate()
 
         sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
