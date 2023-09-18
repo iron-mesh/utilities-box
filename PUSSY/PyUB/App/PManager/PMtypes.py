@@ -16,6 +16,8 @@ class PluginListItem:
     plugin_db_key: str = ""
     plugin_dirsite = ""
     plugin_translators: list[QTranslator] = dataclasses.field(default_factory=list)
+    default_settings_values_dict: dict = dataclasses.field(default_factory=dict)
+    default_settings_params_dict: dict = dataclasses.field(default_factory=dict)
 
 @dataclasses.dataclass
 class PluginParameters:

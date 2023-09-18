@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'DialogAboutqeeaUr.ui'
+## Form generated from reading UI file 'DialogAboutpebXnW.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
     QFrame, QHBoxLayout, QLabel, QPushButton,
     QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
-import res_rc
+import pussy_ressources_rc
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):

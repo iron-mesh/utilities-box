@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'UtilitiesBoxMainWindowOjlTpq.ui'
+## Form generated from reading UI file 'UtilitiesBoxMainWindowJVvxEV.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplicat
     QMainWindow, QMenu, QMenuBar, QPushButton,
     QScrollArea, QSizePolicy, QSpacerItem, QStackedWidget,
     QStatusBar, QTabWidget, QVBoxLayout, QWidget)
-import res_rc
+import pussy_ressources_rc
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -397,18 +397,24 @@ class Ui_MainWindow(object):
         self.tabWidgetPlugins.setTabText(self.tabWidgetPlugins.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"Tab 2", None))
         self.tabWidgetPlugins.setTabText(self.tabWidgetPlugins.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"Tab 1", None))
 #if QT_CONFIG(tooltip)
-        self.pushButtonClosePluginPage.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
+        self.pushButtonClosePluginPage.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page (Esc)", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButtonClosePluginPage.setText("")
+#if QT_CONFIG(shortcut)
+        self.pushButtonClosePluginPage.setShortcut(QCoreApplication.translate("MainWindow", u"Esc", None))
+#endif // QT_CONFIG(shortcut)
 #if QT_CONFIG(tooltip)
         self.btnReloadPlugins.setToolTip(QCoreApplication.translate("MainWindow", u"Reload all plugins from plugins directory", None))
 #endif // QT_CONFIG(tooltip)
         self.btnReloadPlugins.setText(QCoreApplication.translate("MainWindow", u"\u21ba", None))
         self.labelPluginsPageTitle.setText(QCoreApplication.translate("MainWindow", u"Plugins", None))
 #if QT_CONFIG(tooltip)
-        self.pushButtonCloseSettingsPage.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
+        self.pushButtonCloseSettingsPage.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page (Esc)", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButtonCloseSettingsPage.setText("")
+#if QT_CONFIG(shortcut)
+        self.pushButtonCloseSettingsPage.setShortcut(QCoreApplication.translate("MainWindow", u"Esc", None))
+#endif // QT_CONFIG(shortcut)
         self.labelSettingsPageTitle.setText(QCoreApplication.translate("MainWindow", u"Application Settings", None))
         self.label_language.setText(QCoreApplication.translate("MainWindow", u"Language", None))
 #if QT_CONFIG(tooltip)
@@ -420,9 +426,12 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.pushButtonAplySettings.setText(QCoreApplication.translate("MainWindow", u"Apply Settings", None))
 #if QT_CONFIG(tooltip)
-        self.pushButtonCloseLogs.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page", None))
+        self.pushButtonCloseLogs.setToolTip(QCoreApplication.translate("MainWindow", u"Back to Main page (Esc)", None))
 #endif // QT_CONFIG(tooltip)
         self.pushButtonCloseLogs.setText("")
+#if QT_CONFIG(shortcut)
+        self.pushButtonCloseLogs.setShortcut(QCoreApplication.translate("MainWindow", u"Esc", None))
+#endif // QT_CONFIG(shortcut)
         self.labelLogsPageTitle.setText(QCoreApplication.translate("MainWindow", u"Logs", None))
         self.pushButtonClearLogs.setText(QCoreApplication.translate("MainWindow", u"Clear logs", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"App", None))

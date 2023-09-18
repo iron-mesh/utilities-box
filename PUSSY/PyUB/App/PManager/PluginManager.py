@@ -19,7 +19,6 @@ from typing import Iterator
 from ..app_utils import *
 from typing import Any
 
-
 class PluginManager(QObject):
     def __init__(self, parent:QMainWindow):
         super().__init__()
@@ -101,14 +100,10 @@ class PluginManager(QObject):
                 try:
                     if key in data:
                         if hasattr(cur_plugin.ubwidget_class, "ub_settings"):
-                            if reset_settings:
-                                data_item:PluginParameters = data[key]
-                                data_item.settings_params_dict = cur_plugin.ubwidget_class.ub_settings.prop_params_to_dict()
-                                data_item.settings_prop_values = cur_plugin.ubwidget_class.ub_settings.propvalues_to_dict()
-                                data[key] = data_item
-                            else:
-                                cur_plugin.ubwidget_class.ub_settings.set_prop_params_from_dict(data[key].settings_params_dict)
-                                cur_plugin.ubwidget_class.ub_settings.set_propvalues_from_dict(data[key].settings_prop_values)
+                            cur_plugin.default_settings_values_dict = cur_plugin.ubwidget_class.ub_settings.propvalues_to_dict()
+                            cur_plugin.default_settings_params_dict = cur_plugin.ubwidget_class.ub_settings.prop_params_to_dict()
+                            cur_plugin.ubwidget_class.ub_settings.set_prop_params_from_dict(data[key].settings_params_dict)
+                            cur_plugin.ubwidget_class.ub_settings.set_propvalues_from_dict(data[key].settings_prop_values)
                         cur_plugin.is_enabled = data[key].enabled
                         cur_plugin.init_on_startup = data[key].init_on_startup
                     else:
@@ -220,7 +215,7 @@ class PluginManager(QObject):
     @Slot()
     def _on_extra_btn(self):
         '''Handle press on extra button on plugins page'''
-        plugin = self.sender().plugin
+        plugin:PluginListItem = self.sender().plugin
         menu = QMenu(self._parent)
         menu.setFont(QApplication.font())
 
@@ -238,7 +233,14 @@ class PluginManager(QObject):
             buttons = QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
             answer = QMessageBox.question(self._parent, lc.RESET_SETTINGS, lc.QUESTION_RESET_SETTINGS, buttons)
             if answer == QMessageBox.StandardButton.Yes:
-                self._reload_plugin(plugin)
+                try:
+                    plugin.ubwidget_class.ub_settings.set_prop_params_from_dict(plugin.default_settings_params_dict)
+                    plugin.ubwidget_class.ub_settings.set_propvalues_from_dict(plugin.default_settings_values_dict)
+                    self._save_plugin_settings(plugin, True, True)
+                    self._exec_settings_changed(plugin)
+                except:
+                    text = lc.LOG_RESET_SETTINGS_ERROR.format(module=plugin.module)
+                    self._add_log_message(text, traceback.format_exc(), "red")
 
 
         show_description_action = menu.addAction(lc.INFO)
@@ -248,10 +250,10 @@ class PluginManager(QObject):
             show_description_action.setEnabled(False)
 
         reset_settings_action = menu.addAction(lc.RESET_SETTINGS)
-        if not hasattr(plugin.ubwidget_class, "ub_settings"):
-            reset_settings_action.setEnabled(False)
-        else:
+        if hasattr(plugin.ubwidget_class, "ub_settings"):
             reset_settings_action.triggered.connect(reset_settings)
+        else:
+            reset_settings_action.setEnabled(False)
 
         init_in_startup_action = menu.addAction(lc.INIT_ON_STARTUP)
         init_in_startup_action.setCheckable(True)
@@ -270,18 +272,21 @@ class PluginManager(QObject):
             if (plugin.ubwidget_class.ub_settings.update_data()):
                 try:
                     self._save_plugin_settings(plugin)
+                    self._exec_settings_changed(plugin)
                 except:
                     self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=plugin.module), traceback.format_exc(), "red")
 
-                for j in range(self._twidget.count()):
-                    if type(self._twidget.widget(j)) is plugin.ubwidget_class:
-                        try:
-                            self._twidget.widget(j).settings_changed()
-                        except:
-                            key = self._twidget.widget(j).load_key
-                            plugin_name = self._plugins[key].plugin_name
-                            self._add_log_message(lc.LOG_SETTING_CHANGED_CALL_ERROR.format(plugin=plugin_name), traceback.format_exc(), "red")
-                        break
+    def _exec_settings_changed(self, plugin:PluginListItem):
+        """Try to execute method settings_changed() for <plugin>"""
+        for j in range(self._twidget.count()):
+            if type(self._twidget.widget(j)) is plugin.ubwidget_class:
+                try:
+                    self._twidget.widget(j).settings_changed()
+                except:
+                    key = self._twidget.widget(j).load_key
+                    plugin_name = self._plugins[key].plugin_name
+                    self._add_log_message(lc.LOG_SETTING_CHANGED_CALL_ERROR.format(plugin=plugin_name),traceback.format_exc(), "red")
+                break
 
     @Slot(bool)
     def _on_activate_btn(self, state: bool):
@@ -295,8 +300,7 @@ class PluginManager(QObject):
             for i, plugin in self._plugins.items():
                 key = plugin.plugin_db_key
                 temp_data = data[key]
-                logging.debug \
-                    (f"{plugin.ubwidget_class.__name__} activity, cur_value: {plugin.is_enabled}, stored value: {temp_data.enabled}")
+                logging.debug(f"{plugin.ubwidget_class.__name__} activity, cur_value: {plugin.is_enabled}, stored value: {temp_data.enabled}")
 
                 if temp_data.init_on_startup != plugin.init_on_startup:
                     temp_data.init_on_startup = plugin.init_on_startup
@@ -309,10 +313,14 @@ class PluginManager(QObject):
                     if (not update_tabs): continue
 
                     if plugin.is_enabled:
-                        pl_name = plugin.plugin_short_name
-                        widget = plugin.ubwidget_class()
-                        widget.load_key = key
-                        self._twidget.addTab(widget, pl_name)
+                        try:
+                            new_widget = plugin.ubwidget_class()
+                        except:
+                            new_widget = FailWidget()
+                            new_widget.set_error_msg(lc.ERROR_WIDGET_INIT.format(wgt_class=plugin.ubwidget_class, traceback_info=traceback.format_exc()))
+                        finally:
+                            new_widget.load_key = key
+                            self._twidget.addTab(new_widget, plugin.plugin_short_name)
                     else:
                         for j in range(self._twidget.count()):
                             widget = self._twidget.widget(j)

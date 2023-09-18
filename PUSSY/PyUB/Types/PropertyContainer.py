@@ -1,11 +1,14 @@
 from PySide6.QtWidgets import QWidget, QFormLayout, QLabel, QScrollArea, QHBoxLayout, QSizePolicy
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QObject, Signal
 from .Properties import AbstractProperty
 from typing import Any
 import pickle
 
 
-class PropertyContainer:
+class PropertyContainer (QObject):
+
+    editing_started = Signal()
+    editing_finished = Signal(bool)
     def __getattr__(self, item):
         if item in self.__annotations__:
             return self.get_property_value(item)

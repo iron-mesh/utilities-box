@@ -16,12 +16,12 @@ class UBHelper:
 
     def save_settings_parameters(self):
         '''Save settings parameters attached to <ub_settings>, on HDD'''
-        self._plugin_manager.exec_command(self._key_class, Commands.SaveSettingsParameters)
+        with QMutexLocker(self._mutex):
+            self._plugin_manager.exec_command(self._key_class, Commands.SaveSettingsParameters)
 
     def open_localstorage(self, flag='c', protocol=None, writeback=False):
         """Open a persistent dictionary-like object"""
-        with QMutexLocker(self._mutex):
-            return self._plugin_manager.exec_command(self._key_class, Commands.GetLocalStorage, f=flag, p=protocol, w=writeback)
+        return self._plugin_manager.exec_command(self._key_class, Commands.GetLocalStorage, f=flag, p=protocol, w=writeback)
 
     def get_plugin_dir(self)->str:
         """ Returns absolute path to plugin directory"""

@@ -8,7 +8,7 @@ index = home_dir.rfind(os.sep)
 code_dir = home_dir[0:index]
 sys.path.append(code_dir)
 
-from PyUB.App import UBoxMainWindow
+from PyUB.App.UBoxMainWindow import UBoxMainWindow
 from PyUB import utils
 
 utils.set_home_dir(home_dir)

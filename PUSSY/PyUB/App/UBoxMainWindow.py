@@ -55,7 +55,9 @@ class UBoxMainWindow(QMainWindow):
         self.ui.stackedWidget.setCurrentIndex(0)
         self.ui.tabWidgetPlugins.clear()
         self.ui.widget_place.addWidget(self._settings.render_layout())
+        #hide_elements
         self.ui.frameLanguageBlock.setVisible(False)
+        self.ui.btnReloadPlugins.setVisible(False)
 
 
     def _change_page(self, index:int) -> None:

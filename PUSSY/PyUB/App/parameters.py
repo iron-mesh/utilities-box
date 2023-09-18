@@ -2,7 +2,7 @@
 
 LOGGING_DISABLED = 1
 
-VERSION = (0, 0, 1, "a")
+VERSION = (0, 0, 2)
 
 FOLDER_NAMES_IGNORE_LIST = {"template"}
 
