@@ -62,7 +62,7 @@ class PluginManager(QObject):
                 cur_plugin = self._plugins[key]
                 cur_plugin.plugin_db_key = key
                 cur_plugin.is_valid = True
-                utils.ubwidgets_list.clear()
+                utils._ubwidgets_list.clear()
 
                 if not clear_load:
                     tw = self._twidget
@@ -91,8 +91,8 @@ class PluginManager(QObject):
                         del self._plugins[key]
                     continue
 
-                if len(utils.ubwidgets_list) == 1 and issubclass(utils.ubwidgets_list[0], UBWidget):
-                    cur_plugin.ubwidget_class = utils.ubwidgets_list[0]
+                if len(utils._ubwidgets_list) == 1 and issubclass(utils._ubwidgets_list[0], UBWidget):
+                    cur_plugin.ubwidget_class = utils._ubwidgets_list[0]
                 else:
                     cur_plugin.is_valid = False
                     continue
@@ -121,7 +121,7 @@ class PluginManager(QObject):
                     cur_plugin.plugin_name = cur_plugin.ubwidget_class.ub_name
                 else:
                     cur_plugin.plugin_name = cur_plugin.plugin_dir_name
-                cur_plugin.plugin_short_name = utils.crop_string(cur_plugin.plugin_name, 20)
+                cur_plugin.plugin_short_name = crop_string(cur_plugin.plugin_name, 20)
 
                 if cur_plugin.is_enabled:
                     if cur_plugin.init_on_startup:
@@ -142,7 +142,7 @@ class PluginManager(QObject):
                         self._twidget.addTab(dummy_widget, "*" + cur_plugin.plugin_short_name)
 
         sys.path.remove(cur_package_site)
-        utils.ubwidgets_list.clear()
+        utils._ubwidgets_list.clear()
         self._twidget.currentChanged.connect(self._on_tab_changed)
 
     def _reload_plugin(self, plugin:PluginListItem):
@@ -234,10 +234,11 @@ class PluginManager(QObject):
             answer = QMessageBox.question(self._parent, lc.RESET_SETTINGS, lc.QUESTION_RESET_SETTINGS, buttons)
             if answer == QMessageBox.StandardButton.Yes:
                 try:
+                    self._exec_ubwidget_method(plugin, "settings_edit_started")
                     plugin.ubwidget_class.ub_settings.set_prop_params_from_dict(plugin.default_settings_params_dict)
                     plugin.ubwidget_class.ub_settings.set_propvalues_from_dict(plugin.default_settings_values_dict)
                     self._save_plugin_settings(plugin, True, True)
-                    self._exec_settings_changed(plugin)
+                    self._exec_ubwidget_method(plugin, "settings_edit_finished", changed=True)
                 except:
                     text = lc.LOG_RESET_SETTINGS_ERROR.format(module=plugin.module)
                     self._add_log_message(text, traceback.format_exc(), "red")
@@ -266,27 +267,42 @@ class PluginManager(QObject):
     def _on_edit_prop_btn(self):
         '''Handle press on "Configurate" button on plugins page'''
         plugin:PluginListItem = self.sender().plugin
+        is_changed = False
         dialog = DialogEditProperties(self._parent, plugin)
+        self._exec_ubwidget_method(plugin, "settings_edit_started")
         res = dialog.exec_()
         if res == QDialog.Accepted and not dialog.is_error_occured():
-            if (plugin.ubwidget_class.ub_settings.update_data()):
+            if (is_changed:=plugin.ubwidget_class.ub_settings.update_data()):
                 try:
                     self._save_plugin_settings(plugin)
-                    self._exec_settings_changed(plugin)
                 except:
-                    self._add_log_message(lc.LOG_SETTINGS_INIT_ERROR.format(module=plugin.module), traceback.format_exc(), "red")
+                    self._add_log_message(lc.LOG_SETTINGS_SAVE_ERROR.format(module=plugin.module), traceback.format_exc(), "red")
+        self._exec_ubwidget_method(plugin, "settings_edit_finished", changed=is_changed)
 
-    def _exec_settings_changed(self, plugin:PluginListItem):
-        """Try to execute method settings_changed() for <plugin>"""
+    def _exec_ubwidget_method(self, plugin:PluginListItem, method:str, **params):
+        """Try to execute <method>() for <plugin>"""
+        ubwidget_ins = None
+        message=""
         for j in range(self._twidget.count()):
             if type(self._twidget.widget(j)) is plugin.ubwidget_class:
-                try:
-                    self._twidget.widget(j).settings_changed()
-                except:
-                    key = self._twidget.widget(j).load_key
-                    plugin_name = self._plugins[key].plugin_name
-                    self._add_log_message(lc.LOG_SETTING_CHANGED_CALL_ERROR.format(plugin=plugin_name),traceback.format_exc(), "red")
+                ubwidget_ins = self._twidget.widget(j)
                 break
+        if ubwidget_ins is None:
+            return
+
+        try:
+            if method == "settings_edit_started":
+                message = lc.LOG_SETTINGS_EDIT_STARTED_CALL_ERROR.format(plugin=plugin.plugin_name)
+                ubwidget_ins.settings_edit_started()
+            elif method == "settings_edit_finished":
+                message = lc.LOG_SETTINGS_EDIT_FINISHED_CALL_ERROR.format(plugin=plugin.plugin_name)
+                ubwidget_ins.settings_edit_finished(params["changed"])
+            elif method == "deactivated":
+                message = lc.LOG_DEACTIVATED_CALL_ERROR.format(plugin=plugin.plugin_name)
+                ubwidget_ins.deactivated()
+        except:
+            self._add_log_message(message,traceback.format_exc(), "red")
+
 
     @Slot(bool)
     def _on_activate_btn(self, state: bool):
@@ -322,6 +338,7 @@ class PluginManager(QObject):
                             new_widget.load_key = key
                             self._twidget.addTab(new_widget, plugin.plugin_short_name)
                     else:
+                        self._exec_ubwidget_method(plugin, "deactivated")
                         for j in range(self._twidget.count()):
                             widget = self._twidget.widget(j)
                             if widget.load_key == key:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'DialogPluginInfoMCeKpc.ui'
+## Form generated from reading UI file 'DialogPluginInfoIinNPq.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.5.1
 ##
@@ -35,8 +35,9 @@ class Ui_Dialog(object):
         self.formLayout = QFormLayout(self.scrollAreaWidgetContents)
         self.formLayout.setObjectName(u"formLayout")
         self.formLayout.setLabelAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-        self.formLayout.setHorizontalSpacing(8)
+        self.formLayout.setHorizontalSpacing(13)
         self.formLayout.setVerticalSpacing(11)
+        self.formLayout.setContentsMargins(20, 20, 20, 15)
         self.label = QLabel(self.scrollAreaWidgetContents)
         self.label.setObjectName(u"label")
         self.label.setStyleSheet(u"font-weight: Bold")

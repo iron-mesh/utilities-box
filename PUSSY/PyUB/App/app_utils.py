@@ -29,4 +29,11 @@ def rreload(module):
             rreload(attribute)
 
 
+def set_home_dir(path: str) -> None:
+    parameters.HOME_DIR = path
 
+def crop_string(s:str, length:int):
+    if len(s) <= length:
+        return s
+    else:
+        return(s[0:length-1] + u"…")

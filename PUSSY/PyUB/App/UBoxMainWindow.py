@@ -42,6 +42,7 @@ class UBoxMainWindow(QMainWindow):
         self.ui.menu_logs.triggered.connect(lambda:self._change_page(3))
         self.ui.menu_exit.triggered.connect(self.close)
         self.ui.menu_about.triggered.connect(self._on_menu_about)
+        self.ui.menu_manual.triggered.connect(self._on_menu_help)
         self.ui.btnReloadPlugins.clicked.connect(self._on_reload_plugins)
         self.ui.pushButtonClosePluginPage.clicked.connect(self._back_to_mainpage)
         self.ui.pushButtonCloseSettingsPage.clicked.connect(self._back_to_mainpage)
@@ -71,7 +72,7 @@ class UBoxMainWindow(QMainWindow):
         dialog.exec()
 
     def _on_menu_help(self):
-        pass
+        QMessageBox.warning(self, "Oops", "You can do it without help")
 
     def _back_to_mainpage(self):
         self.ui.stackedWidget.setCurrentIndex(0)

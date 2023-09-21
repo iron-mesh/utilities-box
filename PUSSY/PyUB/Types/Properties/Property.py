@@ -34,7 +34,7 @@ class Property(AbstractProperty):
         pass
 
     def extract_widget_data(self) -> bool:
-        """Extracts data from widget
+        """Extracts data from the widget
         Returns True if value was changed, False - otherwise"""
         pass
 

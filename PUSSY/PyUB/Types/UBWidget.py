@@ -16,6 +16,15 @@ class UBWidget(QWidget):
         """ The app calls this method before closing"""
         pass
 
-    def settings_changed(self) -> None:
-        """ The app calls this method if any property in ub_settings has been changed"""
+    def settings_edit_started(self) -> None:
+        """ The app calls this method before ub_settings editing"""
+        pass
+
+    def settings_edit_finished(self, changed:bool) -> None:
+        """ The app calls this method after settings editing
+        changed=True, if any property in ub_settings has been changed, False -otherwise"""
+        pass
+
+    def deactivated(self)->None:
+        """ The app calls this method if an user deactivated this plugin"""
         pass

@@ -9,9 +9,9 @@ code_dir = home_dir[0:index]
 sys.path.append(code_dir)
 
 from PyUB.App.UBoxMainWindow import UBoxMainWindow
-from PyUB import utils
+from PyUB.App.app_utils import set_home_dir
 
-utils.set_home_dir(home_dir)
+set_home_dir(home_dir)
 
 app = QApplication(sys.argv)
 window = UBoxMainWindow()

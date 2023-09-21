@@ -1,4 +1,3 @@
-print("load settings")
 
 from PyUB.Types import PropertyContainer
 from PyUB.Types.Properties import *
