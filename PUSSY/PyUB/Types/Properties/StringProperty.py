@@ -6,7 +6,7 @@ from PySide6.QtCore import QCoreApplication
 
 class StringProperty(Property):
 
-    def __init__(self, default_value:str = "", name ="Unnamed", maxlen = 0, input_mask = "", placeholder ="", tool_tip =""):
+    def __init__(self, default_value:str="", name="Unnamed", maxlen=0, input_mask="", placeholder="", tool_tip=""):
         self._value = default_value
         self.p_name = name
         self.p_placeholder = placeholder
@@ -19,8 +19,7 @@ class StringProperty(Property):
         self.retranslate()
         if self.p_maxlen > 0:
             self._widget_ref.setMaxLength(self.p_maxlen)
-        if self.p_input_mask:
-            self._widget_ref.setInputMask(self.p_input_mask)
+        self._widget_ref.setInputMask(self.p_input_mask)
         self._widget_ref.setText(self._value)
         return self._widget_ref
 

@@ -16,12 +16,14 @@ class CheckableButton(QPushButton):
 
     def set_enabled_text(self, s:str):
         self._enabled_text = s
+        self._update_view()
 
     def enabled_text(self):
         return self._enabled_text
 
     def set_disabled_text(self, s: str):
         self._disabled_text = s
+        self._update_view()
 
     def disabled_text(self):
         return self._disabled_text

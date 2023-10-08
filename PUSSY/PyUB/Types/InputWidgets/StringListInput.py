@@ -1,9 +1,6 @@
 
 from PySide6.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QSpacerItem ,QSizePolicy, QInputDialog, QListWidgetItem, QApplication
 from PySide6.QtCore import Signal, Slot, QCoreApplication
-import logging
-
-
 
 
 class StringListInput(QWidget):

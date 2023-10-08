@@ -13,7 +13,8 @@ class CodeLock(UBWidget):
         self.ui = Ui_Form()
         self.ui.setupUi(self)
         self._init_gui()
-        self.code = self.ub_settings.get_property_value("code")
+
+        self._code = self.ub_settings.get_property_value("code")
 
     def _init_gui(self):
         for name in dir(self.ui):
@@ -30,8 +31,8 @@ class CodeLock(UBWidget):
         self.ui.lineEdit.setText(self.ui.lineEdit.text() + s.text())
 
     def text_changed(self, text):
-        if len(text) == len(self.code):
-            if text == self.code:
+        if len(text) == len(self._code):
+            if text == self._code:
                 self.ui.lineEdit.setStyleSheet(u"background-color: rgb(85, 255, 127);")
             else:
                 self.ui.lineEdit.setStyleSheet(u"background-color: rgb(240, 54, 8);")
@@ -48,5 +49,5 @@ class CodeLock(UBWidget):
 
     def settings_edit_finished(self, changed:bool) -> None:
         if not changed: return
-        self.code = self.ub_settings.get_property_value("code")
+        self._code = self.ub_settings.get_property_value("code")
         self.ui.lineEdit.clear()

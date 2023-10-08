@@ -46,7 +46,7 @@ class PropertyContainer:
     @classmethod
     def update_data(cls) -> bool:
         """ Extract data from gui widgets
-        Return True if any value is changed, False - otherwise"""
+        Return True if any value has been changed, False - otherwise"""
         is_updated = False
 
         for key, prop in cls.__annotations__.items():

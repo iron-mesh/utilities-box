@@ -6,10 +6,11 @@ from . import AbstractProperty
 
 
 class Property(AbstractProperty):
-    def __init__(self, default_value: Any, name: str = "Unnamed") -> None:
+    def __init__(self, default_value: Any, name: str = "Unnamed", tool_tip="") -> None:
         """Init property instance"""
         self._value = default_value
         self.p_name = name
+        self.p_tool_tip = tool_tip
 
     def value(self) -> Any:
         """Returns property's value"""
