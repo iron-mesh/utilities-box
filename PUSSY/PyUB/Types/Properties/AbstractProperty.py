@@ -11,31 +11,33 @@ class AbstractProperty(metaclass=ABCMeta):
 
     @abstractmethod
     def value(self) -> Any:
-        """Return property's value"""
+        """Returns property's value"""
         pass
 
     @abstractmethod
     def set_value(self, value: Any) -> None:
-        """Set property's value"""
+        """Sets property's value"""
         pass
 
     @abstractmethod
     def get_parameters_dict(self) -> dict[str, Any]:
+        """Returns dictionary of parameters"""
         pass
 
     @abstractmethod
     def set_parameters_from_dict(self, params: dict[str, Any]) -> None:
+        """Sets dictionary of parameters"""
         pass
 
     @abstractmethod
     def get_input_widget(self) -> QWidget:
-        """Return widget for data input"""
+        """Returns widget for data input"""
         pass
 
     @abstractmethod
     def extract_widget_data(self) -> bool:
-        """Extracts data from widget
-               Returns True if value has been changed, False - otherwise"""
+        """Extracts data from the widget
+            Returns True if value has been changed, False - otherwise"""
         pass
 
     @abstractmethod
@@ -45,4 +47,5 @@ class AbstractProperty(metaclass=ABCMeta):
 
     @abstractmethod
     def retranslate(self) -> None:
+        """Sets translations of displayed text"""
         pass

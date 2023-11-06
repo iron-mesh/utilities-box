@@ -1,17 +1,19 @@
 
-from .import Property
+from .import PropertyValidated
 from PySide6.QtWidgets import QSpinBox, QSizePolicy
 from PySide6.QtCore import QCoreApplication
 
-class IntProperty(Property):
+class IntProperty(PropertyValidated):
 
     def __init__(self, default_value:int = 0, name="Unnamed", minimum=1, maximum=10, single_step=1, tool_tip=""):
-        self._value = default_value
+        self._switch_validation(False)
         self.p_name = name
         self.p_minimum = minimum
         self.p_maximum = maximum
         self.p_single_step = single_step
         self.p_tool_tip = tool_tip
+        self._switch_validation(True)
+        self._value = default_value
 
     def get_input_widget(self) -> QSpinBox:
         self._widget_ref = QSpinBox()
@@ -26,21 +28,21 @@ class IntProperty(Property):
 
         return self._widget_ref
 
-    def extract_widget_data(self) -> None:
+    def extract_widget_data(self) -> bool:
         has_value_changed: bool = False
         if (hasattr(self, "_widget_ref")) and (self._value != self._widget_ref.value()):
             self._value = self._widget_ref.value()
             has_value_changed = True
         return has_value_changed
 
-    def set_value(self, value: int) -> None:
-        if value < self.p_minimum:
-            self._value = self.p_minimum
-        elif value > self.p_maximum:
-            self._value = self.p_maximum
-        else:
-            self._value = value
-
     def retranslate(self) -> None:
         self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))
 
+    def validate_value(self, changed_attr:str=""):
+        check_list = ["_value", "p_maximum", "p_minimum"]
+        if (changed_attr in check_list) or not changed_attr:
+            value = self._value
+            if value < self.p_minimum:
+                self.__dict__["_value"] = self.p_minimum
+            elif value > self.p_maximum:
+                self.__dict__["_value"] = self.p_maximum

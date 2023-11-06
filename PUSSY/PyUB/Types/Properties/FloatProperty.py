@@ -1,19 +1,21 @@
 
-from . import Property
+from . import IntProperty
 from PySide6.QtWidgets import QDoubleSpinBox, QSizePolicy
 from PySide6.QtCore import QCoreApplication
 import math
 
-class FloatProperty(Property):
+class FloatProperty(IntProperty):
 
-    def __init__(self, default_value:float = 0.0, name ="Unnamed", minimum = 1.0, maximum = 10.0, single_step = 1.0, decimals = 2, tool_tip = ""):
-        self._value = default_value
+    def __init__(self, default_value:float=0.0, name="Unnamed", minimum=1.0, maximum=10.0, single_step=1.0, decimals=2, tool_tip=""):
+        self._switch_validation(False)
         self.p_name = name
         self.p_minimum = minimum
         self.p_maximum = maximum
         self.p_single_step = single_step
         self.p_decimals = decimals
         self.p_tool_tip = tool_tip
+        self._switch_validation(True)
+        self._value = default_value
 
     def get_input_widget(self) -> QDoubleSpinBox:
         self._widget_ref = QDoubleSpinBox()
@@ -35,14 +37,6 @@ class FloatProperty(Property):
             self._value = self._widget_ref.value()
             has_value_changed = True
         return has_value_changed
-
-    def set_value(self, value: float) -> None:
-        if value < self.p_minimum:
-            self._value = self.p_minimum
-        elif value > self.p_maximum:
-            self._value = self.p_maximum
-        else:
-            self._value = value
 
     def retranslate(self) -> None:
         self._widget_ref.setToolTip(QCoreApplication.translate("properties", self.p_tool_tip))

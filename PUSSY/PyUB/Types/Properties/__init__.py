@@ -1,6 +1,7 @@
 
 from .AbstractProperty import AbstractProperty
 from .Property import Property
+from .PropertyValidated import PropertyValidated
 from .BoolProperty import BoolProperty
 from .IntProperty import IntProperty
 from .FloatProperty import FloatProperty
