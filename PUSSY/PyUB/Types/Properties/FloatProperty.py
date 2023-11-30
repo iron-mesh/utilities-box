@@ -7,14 +7,14 @@ import math
 class FloatProperty(IntProperty):
 
     def __init__(self, default_value:float=0.0, name="Unnamed", minimum=1.0, maximum=10.0, single_step=1.0, decimals=2, tool_tip=""):
-        self._switch_validation(False)
+        self._set_validation(False)
         self.p_name = name
         self.p_minimum = minimum
         self.p_maximum = maximum
         self.p_single_step = single_step
         self.p_decimals = decimals
         self.p_tool_tip = tool_tip
-        self._switch_validation(True)
+        self._set_validation(True)
         self._value = default_value
 
     def get_input_widget(self) -> QDoubleSpinBox:

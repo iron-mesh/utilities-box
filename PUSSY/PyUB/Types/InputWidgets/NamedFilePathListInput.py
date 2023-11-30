@@ -2,7 +2,7 @@ import os
 
 from PySide6.QtWidgets import QListWidget, QHBoxLayout, QVBoxLayout, QPushButton, QWidget, QSpacerItem ,QSizePolicy, QInputDialog, QListWidgetItem, QLineEdit, QFileDialog, QMessageBox, QApplication
 from PySide6.QtCore import Signal, Slot, QCoreApplication, Qt, QSize
-from . import PathInputMode, PathInput
+from . import PathInputMode
 import logging
 
 
@@ -69,10 +69,12 @@ class NamedFilePathListInput(QWidget):
         """Set list of items"""
         self._listWidget.clear()
         for i in lst:
-            item = QListWidgetItem(i[0])
-            item.setData(Qt.ItemDataRole.UserRole, i[1])
-            item_flags = Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable
-            item.setFlags(item_flags)
+            name = i[0]
+            path = i[1]
+            if not self._is_itempart_unique(path, part="p"): continue
+            item = QListWidgetItem(self._validate_item_name(name))
+            item.setData(Qt.ItemDataRole.UserRole, path)
+            item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable)
             self._listWidget.addItem(item)
 
     def setToolTip(self, arg__1: str) -> None:
@@ -88,7 +90,7 @@ class NamedFilePathListInput(QWidget):
         self._mode = mode
 
     def mode(self) -> PathInputMode:
-        """Get mode of input"""
+        """Returns mode of input"""
         return self._mode
 
     def set_file_filter(self, filter: str = "(*.*)") -> None:
@@ -101,17 +103,20 @@ class NamedFilePathListInput(QWidget):
         For example: (Sound, (*.mp3))"""
         return self._file_filter
 
-    def _is_item_unique(self, name:str, path:str, ignored_row:int=-1) -> bool:
+    def _is_itempart_unique(self, text:str, ignore_row:int=-1, part:str="n") -> bool:
+        """Check unique of item part
+        part options:
+            n - name
+            p - path"""
         for i in range(self._listWidget.count()):
-            if i == ignored_row:
-                continue
-
+            if i == ignore_row: continue
             item = self._listWidget.item(i)
-            if item.text() == name or item.data(Qt.ItemDataRole.UserRole) == path:
+            check_text = item.text() if part == "n" else item.data(Qt.ItemDataRole.UserRole)
+            if text == check_text:
                 return False
         return True
 
-    def _select_path(self) -> str:
+    def _get_path(self) -> str:
         prev_path = self.path_lineEdit.text()
         path: str = ""
         if (self._mode == PathInputMode.Directory):
@@ -124,17 +129,16 @@ class NamedFilePathListInput(QWidget):
 
     @Slot()
     def _on_add_btn(self):
-        path = self._select_path()
+        path = self._get_path()
         if os.path.exists(path):
             name = os.path.basename(path)
-            if is_unique := self._is_item_unique(name, path):
+            if self._is_itempart_unique(path, part="p"):
                 item = QListWidgetItem()
-                item_flags = Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable
-                item.setFlags(item_flags)
-                item.setText(name)
+                item.setFlags(Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsEditable)
+                item.setText(self._validate_item_name(name))
                 item.setData(Qt.ItemDataRole.UserRole, path)
                 self._listWidget.addItem(item)
-            elif not is_unique:
+            else:
                 mes = QCoreApplication.translate("input_widgets", "Path: <{0}> already exists").format(path)
                 QMessageBox.warning(self, QCoreApplication.translate("input_widgets", "Warning"), mes)
 
@@ -144,9 +148,8 @@ class NamedFilePathListInput(QWidget):
         if row >= 0:
             self._listWidget.blockSignals(True)
             item = self._listWidget.item(row)
-            path = self._select_path()
-            name = item.text()
-            if self._is_item_unique(name, path, row):
+            path = self._get_path()
+            if self._is_itempart_unique(path, row, "p"):
                 item.setData(Qt.ItemDataRole.UserRole, path)
                 self.path_lineEdit.setText(item.data(Qt.ItemDataRole.UserRole))
             else:
@@ -154,22 +157,25 @@ class NamedFilePathListInput(QWidget):
                 QMessageBox.warning(self, QCoreApplication.translate("input_widgets", "Warning"), mes)
             self._listWidget.blockSignals(False)
 
+    def _validate_item_name(self, name:str, ignore_row:int=-1) -> str:
+        """Returns modified <name> if it's not unique, otherwise - original <name>"""
+        i = 2
+        new_name = QCoreApplication.translate("input_widgets", "Unnamed") if name == "" else name
+        orig_name = new_name
+        while not self._is_itempart_unique(new_name, ignore_row, part="n"):
+            new_name = f"{orig_name} ({i})"
+            i += 1
+        return new_name
+
     @Slot(QListWidgetItem)
     def _on_name_changed(self, item:QListWidgetItem):
-        logging.debug("in <_on_name_changed>")
-        row = self._listWidget.currentRow()
-        name = new_name = item.text()
-        path = item.data(Qt.ItemDataRole.UserRole)
-        i = 2
+        name = item.text()
+        logging.debug(f"in <_on_name_changed> name: {name}")
+        self._listWidget.blockSignals(True)
+        item.setText(self._validate_item_name(name, self._listWidget.row(item)))
+        self._listWidget.blockSignals(False)
 
-        while not self._is_item_unique(new_name, path, row):
-            new_name = f"{name} ({i})"
-            i += 1
-        if name == "":
-            new_name = QCoreApplication.translate("input_widgets", "Unnamed")
-        item.setText(new_name)
-
-    @Slot(QListWidgetItem)
+    @Slot()
     def _on_del_btn(self):
         row = self._listWidget.currentRow()
         if row >= -1:

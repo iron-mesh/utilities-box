@@ -7,7 +7,7 @@ import pickle
 
 class PropertyContainer:
 
-    def __getattr__(self, item):
+    def __getattr__(self, item) -> Any:
         if item in self.__annotations__:
             return self.get_property_value(item)
         else:
@@ -55,7 +55,6 @@ class PropertyContainer:
                 is_updated = True
         return is_updated
 
-
     @classmethod
     def propvalues_to_dict(cls) -> dict[str, (AbstractProperty, Any)]:
         """ Return dictionary of properties values"""
@@ -96,4 +95,3 @@ class PropertyContainer:
 
         for key, prop in cls.__annotations__.items():
             prop.retranslate()
-

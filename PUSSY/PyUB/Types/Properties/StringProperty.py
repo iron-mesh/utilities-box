@@ -8,14 +8,14 @@ from PySide6.QtGui import QRegularExpressionValidator
 class StringProperty(PropertyValidated):
 
     def __init__(self, default_value:str="", name="Unnamed", maxlen=0, input_mask="", placeholder="", tool_tip="", re_validator=""):
-        self._switch_validation(False)
+        self._set_validation(False)
         self.p_name = name
         self.p_placeholder = placeholder
         self.p_tool_tip = tool_tip
         self.p_maxlen = maxlen
         self.p_input_mask = input_mask
         self.p_re_validator = re_validator
-        self._switch_validation(True)
+        self._set_validation(True)
         self._value = default_value
 
     def get_input_widget(self) -> QLineEdit:
@@ -23,7 +23,7 @@ class StringProperty(PropertyValidated):
         self.retranslate()
         return self._widget_ref
 
-    def extract_widget_data(self) -> None:
+    def extract_widget_data(self) -> bool:
         has_value_changed: bool = False
         if (hasattr(self, "_widget_ref")) and (self._value != self._widget_ref.text()):
             self._value = self._widget_ref.text()

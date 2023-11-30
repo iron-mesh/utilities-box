@@ -18,13 +18,13 @@ class PathInput(QWidget):
     def __init__(self, parent=None, mode: PathInputMode = PathInputMode.FileOpen):
         super().__init__(parent)
         self._mode = mode
-        self._title: str = ""
-        self._file_filter: str = ""
+        self._title: str = "Open|Save file/folder"
+        self._file_filter: str = "(*.*)"
         self._placeholder: str = ""
 
         self._line_edit = QLineEdit()
         self._btn_selectpath = QPushButton(u"...")
-        self._btn_selectpath.clicked.connect(self.select_path)
+        self._btn_selectpath.clicked.connect(self._on_select_path)
         self._btn_clear = QPushButton(u"✖")
         self._btn_clear.clicked.connect(self._on_clear)
 
@@ -50,7 +50,7 @@ class PathInput(QWidget):
         """Get title of file select dialog window"""
         return self._title
 
-    def get_path(self) -> str:
+    def path(self) -> str:
         """Get path to a file|directory"""
         return self._line_edit.text()
 
@@ -82,16 +82,16 @@ class PathInput(QWidget):
     def toolTip(self) -> str:
         return self._line_edit.toolTip()
 
-    def select_path(self) -> str:
-        prev_path = self.get_path()
+    def _on_select_path(self) -> str:
+        prev_path = self.path()
         path: str = ""
         if (self._mode == PathInputMode.Directory):
-            path: str = QFileDialog.getExistingDirectory(None, self.window_title(), self.get_path(),
+            path: str = QFileDialog.getExistingDirectory(None, self.window_title(), self.path(),
                                                          QFileDialog.ShowDirsOnly)
         elif (self._mode == PathInputMode.FileOpen):
-            path: str = QFileDialog.getOpenFileName(None, self.window_title(), self.get_path(), self.file_filter())[0]
+            path: str = QFileDialog.getOpenFileName(None, self.window_title(), self.path(), self.file_filter())[0]
         elif (self._mode == PathInputMode.FileSave):
-            path: str = QFileDialog.getSaveFileName(None, self.window_title(), self.get_path(), self.file_filter())[0]
+            path: str = QFileDialog.getSaveFileName(None, self.window_title(), self.path(), self.file_filter())[0]
 
         if (path != prev_path and path):
             self.set_path(path)

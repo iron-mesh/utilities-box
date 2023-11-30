@@ -7,7 +7,7 @@ ub_info ={"description": "Type brief description of your plugin... ",
           "author": "Iron Mesh",
           "author_webpage": "https://ironmesh.ru",
           "author_email": "products@ironmesh.ru",
-          "version":"0.1.2",
+          "version": "0.1.2",
           "wiki_url": "https://...."}
 
 register_ubwidget(MyUBWidget)

@@ -6,12 +6,12 @@ from PySide6.QtCore import QCoreApplication
 
 class ComboBoxProperty(PropertyValidated):
     def __init__(self,  items:list[str], translatable:bool=False, default_value:int=0, name="Unnamed", tool_tip=""):
-        self._switch_validation(False)
+        self._set_validation(False)
         self.p_items = items
         self.p_translatable = translatable
         self.p_name = name
         self.p_tool_tip = tool_tip
-        self._switch_validation(True)
+        self._set_validation(True)
         self._value = default_value
 
     def get_current_item_text(self) -> str:
