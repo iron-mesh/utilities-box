@@ -3,6 +3,7 @@ from .AbstractProperty import AbstractProperty
 from .Property import Property
 from .PropertyValidated import PropertyValidated
 from .BoolProperty import BoolProperty
+from .BoolListProperty import BoolListProperty
 from .IntProperty import IntProperty
 from .FloatProperty import FloatProperty
 from .StringProperty import StringProperty

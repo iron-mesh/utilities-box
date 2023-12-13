@@ -12,6 +12,8 @@ PLUGINS_LOCALSTORAGE_PATH = r"data/localstorage"
 APP_DATA_PATH = r"data/app/app_data"
 PLUGIN_DIR_PATH = r"Plugins"
 
+WIKI_URL = r"www.wiki.ironmesh.ru/products:pussy:main"
+
 
 import logging
 

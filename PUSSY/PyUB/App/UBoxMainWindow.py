@@ -12,7 +12,7 @@ from . import lang_constants as lc
 from .app_utils import *
 from .PManager import PluginManager
 from PyUB.App.UBoxAboutDialog import UBoxAboutDialog
-import logging, importlib, traceback
+import logging, importlib, traceback, webbrowser
 
 
 class UBoxMainWindow(QMainWindow):
@@ -72,7 +72,7 @@ class UBoxMainWindow(QMainWindow):
         dialog.exec()
 
     def _on_menu_help(self):
-        QMessageBox.warning(self, "Oops", "You can do it without help")
+        webbrowser.open(parameters.WIKI_URL)
 
     def _back_to_mainpage(self):
         self.ui.stackedWidget.setCurrentIndex(0)
