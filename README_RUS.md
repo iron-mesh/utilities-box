@@ -19,3 +19,6 @@
 pip install PySide6
 ```
 Затем нужно запустить файл **PUSSY.pyw**
+
+## Разработка плагина
+Полную документацию по разработке и API читайте на [странице wiki](https://wiki.ironmesh.ru/products:pussy:main)
